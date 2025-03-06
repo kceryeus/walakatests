@@ -16,7 +16,62 @@
   <style>
   
 
-   
+       /* Sidebar */
+       .sidebar {
+      background: linear-gradient(195deg, #007ec7, #02204e);
+      color: white;
+      padding: 2rem 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      transition: transform var(--transition-speed) ease;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--card-radius);
+      transition: all var(--transition-speed) ease;
+    }
+
+    .logo:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--card-radius);
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+
+    .nav-item i {
+      width: 24px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
