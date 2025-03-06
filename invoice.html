@@ -14,10 +14,35 @@
     const supabase = supabase.createClient(supabaseUrl, supabaseKey)
   </script>
   <style>
-    body {
+:root {
+      --primary-color: #007ec7; /* Corporate blue */
+      --secondary-color: #4f46e5;
+      --accent-color: #818cf8;
+      --background-color: #f8fafc;
+      --sidebar-width: 280px;
+      --topbar-height: 80px;
+      --card-radius: 16px;
+      --transition-speed: 0.3s;
+    }
+
+    * {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--background-color);
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    body.loaded {
+      opacity: 1;
     }
 
     .content {
