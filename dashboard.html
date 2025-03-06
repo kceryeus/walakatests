@@ -389,11 +389,11 @@
       <div class="quick-actions">
         <div class="quick-action-card" onclick="window.location.href='invoice.html'">
           <i class="fas fa-plus"></i>
-          <span>Criar Fatura</span>
+          <span>Criar Factura</span>
         </div>
         <div class="quick-action-card" onclick="showCachedInvoices()">
           <i class="fas fa-list"></i>
-          <span>Exibir Faturas</span>
+          <span>Exibir Facturas</span>
         </div>
         <div class="quick-action-card" id="exportDataButton">
           <i class="fas fa-download"></i>
@@ -576,7 +576,7 @@ async function displayUserName() {
     const { data, error: profileError } = await supabase
       .from('users') // Assuming the table is called 'profiles'
       .select('username') // Assuming the column is called 'username'
-      .eq('id', users.id) // Matching by user ID
+      .eq('id', user.id) // Matching by user ID
       .single();
 
     if (profileError) {
