@@ -30,7 +30,7 @@
         const { data, error: userError } = await supabase
           .from('users') // Table name
           .select('username') // Column name
-          .eq('id', users.id) // Matching by user ID
+          .eq('id', user.id) // Matching by user ID
           .single();
 
         if (userError) {
