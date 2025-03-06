@@ -557,6 +557,12 @@
       }
     }
 
+
+    // Initialize SUPABASE
+        const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    
     // Fetch and display the user's name
 async function displayUserName() {
   const { data: { user }, error } = await supabase.auth.getUser();
