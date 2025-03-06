@@ -157,65 +157,7 @@
 
   <!-- SEÇÃO DE SCRIPTS -->
 
- <!-- Importando Supabase via ES Module -->
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/+esm';
-
-    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
-    
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // 2) Buscar dados de usuário logado e exibir
-    async function displayUserName() {
-      try {
-        // Retorna { data: { user }, error }
-        const { data: { user }, error } = await supabase.auth.getUser();
-        if (error) {
-          console.error('Erro ao buscar usuário:', error.message);
-          return;
-        }
-        
-        if (user) {
-          // Ajuste o nome da tabela e coluna conforme seu banco
-          const { data: profileData, error: profileError } = await supabase
-            .from('users')       // Tabela
-            .select('username')  // Coluna
-            .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
-            .single();
-
-          if (profileError) {
-            console.error('Erro ao buscar perfil:', profileError.message);
-            return;
-          }
-
-          const userNameSpan = document.getElementById('user-name');
-          if (userNameSpan) {
-            userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido';
-          }
-        } else {
-          // Se não houver sessão ativa
-          document.getElementById('user-name').textContent = 'Não logado';
-        }
-      } catch (err) {
-        console.error('Erro inesperado:', err);
-      }
-    }
-
-    // 3) Chamar displayUserName quando a página carregar
-    window.addEventListener('DOMContentLoaded', displayUserName);
-
-    // 4) Função de sign out
-    async function handleSignOut() {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Erro ao sair:', error);
-      } else {
-        // Redireciona após sign out
-        window.location.href = '/login.html';
-      }
-    }
-  </script>
+ 
   
   <script>
     // Exemplo de uso do Chart.js (já está certo no seu código)
@@ -299,6 +241,65 @@
         })
         .catch(error => console.error('Erro ao exportar dados:', error));
     });
+  </script>
+  <!-- Importando Supabase via ES Module -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/+esm';
+
+    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // 2) Buscar dados de usuário logado e exibir
+    async function displayUserName() {
+      try {
+        // Retorna { data: { user }, error }
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error) {
+          console.error('Erro ao buscar usuário:', error.message);
+          return;
+        }
+        
+        if (user) {
+          // Ajuste o nome da tabela e coluna conforme seu banco
+          const { data: profileData, error: profileError } = await supabase
+            .from('users')       // Tabela
+            .select('username')  // Coluna
+            .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
+            .single();
+
+          if (profileError) {
+            console.error('Erro ao buscar perfil:', profileError.message);
+            return;
+          }
+
+          const userNameSpan = document.getElementById('user-name');
+          if (userNameSpan) {
+            userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido';
+          }
+        } else {
+          // Se não houver sessão ativa
+          document.getElementById('user-name').textContent = 'Não logado';
+        }
+      } catch (err) {
+        console.error('Erro inesperado:', err);
+      }
+    }
+
+    // 3) Chamar displayUserName quando a página carregar
+    window.addEventListener('DOMContentLoaded', displayUserName);
+
+    // 4) Função de sign out
+    async function handleSignOut() {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Erro ao sair:', error);
+      } else {
+        // Redireciona após sign out
+        window.location.href = '/login.html';
+      }
+    }
   </script>
 </body>
 </html>
