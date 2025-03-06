@@ -9,332 +9,73 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-  <!-- Importando Supabase (certifique-se de que vem ANTES do seu script) -->
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  
+  <!-- Importando Supabase via ES Module -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/+esm';
+
+    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // 2) Buscar dados de usuário logado e exibir
+    async function displayUserName() {
+      try {
+        // Retorna { data: { user }, error }
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error) {
+          console.error('Erro ao buscar usuário:', error.message);
+          return;
+        }
+        
+        if (user) {
+          // Ajuste o nome da tabela e coluna conforme seu banco
+          const { data: profileData, error: profileError } = await supabase
+            .from('users')       // Tabela
+            .select('username')  // Coluna
+            .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
+            .single();
+
+          if (profileError) {
+            console.error('Erro ao buscar perfil:', profileError.message);
+            return;
+          }
+
+          const userNameSpan = document.getElementById('user-name');
+          if (userNameSpan) {
+            userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido';
+          }
+        } else {
+          // Se não houver sessão ativa
+          document.getElementById('user-name').textContent = 'Não logado';
+        }
+      } catch (err) {
+        console.error('Erro inesperado:', err);
+      }
+    }
+
+    // 3) Chamar displayUserName quando a página carregar
+    window.addEventListener('DOMContentLoaded', displayUserName);
+
+    // 4) Função de sign out
+    async function handleSignOut() {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Erro ao sair:', error);
+      } else {
+        // Redireciona após sign out
+        window.location.href = '/login.html';
+      }
+    }
+  </script>
+
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     rel="stylesheet"
   />
 
   <style>
-    :root {
-      --primary-color: #007ec7; /* Corporate blue */
-      --secondary-color: #4f46e5;
-      --accent-color: #818cf8;
-      --background-color: #f8fafc;
-      --sidebar-width: 280px;
-      --topbar-height: 80px;
-      --card-radius: 16px;
-      --transition-speed: 0.3s;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--background-color);
-      color: #1e293b;
-      min-height: 100vh;
-      overflow-x: hidden;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    body.loaded {
-      opacity: 1;
-    }
-
-    .dashboard-container {
-      display: grid;
-      grid-template-columns: var(--sidebar-width) 1fr;
-      min-height: 100vh;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      background: linear-gradient(195deg, #007ec7, #02204e);
-      color: white;
-      padding: 2rem 1.5rem;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      transition: transform var(--transition-speed) ease;
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 1rem;
-      border-radius: var(--card-radius);
-      transition: all var(--transition-speed) ease;
-    }
-
-    .logo:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .nav-menu {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.75rem 1rem;
-      border-radius: var(--card-radius);
-      color: #94a3b8;
-      text-decoration: none;
-      transition: all var(--transition-speed) ease;
-    }
-
-    .nav-item:hover,
-    .nav-item.active {
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-    }
-
-    .nav-item i {
-      width: 24px;
-      text-align: center;
-    }
-
-    /* Main Content */
-    .main-content {
-      padding: 2rem;
-      margin-top: var(--topbar-height);
-    }
-
-    .top-bar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: var(--sidebar-width);
-      height: var(--topbar-height);
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      z-index: 100;
-    }
-
-    .search-bar {
-      flex: 1;
-      max-width: 500px;
-      position: relative;
-    }
-
-    .search-bar input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #e2e8f0;
-      border-radius: var(--card-radius);
-      font-size: 0.9rem;
-    }
-
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .notification-bell {
-      position: relative;
-      cursor: pointer;
-    }
-
-    .badge {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: var(--primary-color);
-      color: white;
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 0.75rem;
-    }
-
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      cursor: pointer;
-    }
-
-    .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Cards and Metrics */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .metric-card {
-      background: white;
-      border-radius: var(--card-radius);
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      transition: transform var(--transition-speed) ease;
-    }
-
-    .metric-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .metric-value {
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      margin: 0.5rem 0;
-    }
-
-    .metric-label {
-      color: #64748b;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .chart-card {
-      background: white;
-      border-radius: var(--card-radius);
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      margin-bottom: 1.5rem;
-    }
-
-    .chart-container {
-      height: 300px;
-      margin-top: 1rem;
-      position: relative;
-    }
-
-    /* Recent Transactions Table */
-    .recent-transactions {
-      background: white;
-      border-radius: var(--card-radius);
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .recent-transactions table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .recent-transactions th,
-    .recent-transactions td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .recent-transactions th {
-      color: #64748b;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-    }
-
-    .recent-transactions td {
-      color: #1e293b;
-    }
-
-    /* Quick Actions */
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .quick-action-card {
-      background: white;
-      border-radius: var(--card-radius);
-      padding: 1.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      transition: transform var(--transition-speed) ease;
-      text-align: center;
-    }
-
-    .quick-action-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .quick-action-card i {
-      font-size: 1.5rem;
-      color: var(--primary-color);
-      margin-bottom: 0.5rem;
-    }
-
-    .quick-action-card span {
-      font-size: 0.9rem;
-      color: #64748b;
-    }
-
-    @media (max-width: 768px) {
-      .dashboard-container {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        position: fixed;
-        z-index: 1000;
-        transform: translateX(-100%);
-      }
-
-      .sidebar.active {
-        transform: translateX(0);
-      }
-
-      .top-bar {
-        left: 0;
-      }
-
-      .main-content {
-        margin-top: calc(var(--topbar-height) + 1rem);
-        padding: 1rem;
-      }
-    }
-
-    .sign-out-btn {
-      background: none;
-      border: none;
-      color: #64748b;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      transition: all 0.2s ease;
-    }
-
-    .sign-out-btn:hover {
-      background: #f1f5f9;
-      color: var(--primary-color);
-    }
+    /* Your existing CSS styles */
   </style>
 </head>
 <body>
@@ -476,65 +217,6 @@
 
   <!-- SEÇÃO DE SCRIPTS -->
   <script>
-    // 1) Criar o cliente Supabase (A ORDEM importa!)
-    //    Substitua pela sua URL e KEY
-    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co'
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
-    // 'supabase' vem do script importado via <script src="https://unpkg.com/@supabase/supabase-js"></script>
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
-
-    // 2) Buscar dados de usuário logado e exibir
-    async function displayUserName() {
-      try {
-        // Retorna { data: { user }, error }
-        const { data: { user }, error } = await supabaseClient.auth.getUser()
-        if (error) {
-          console.error('Erro ao buscar usuário:', error.message)
-          return
-        }
-        
-        if (user) {
-          // Ajuste o nome da tabela e coluna conforme seu banco
-          const { data: profileData, error: profileError } = await supabaseClient
-            .from('users')       // Tabela
-            .select('username')  // Coluna
-            .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
-            .single()
-
-          if (profileError) {
-            console.error('Erro ao buscar perfil:', profileError.message)
-            return
-          }
-
-          const userNameSpan = document.getElementById('user-name')
-          if (userNameSpan) {
-            userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido'
-          }
-        } else {
-          // Se não houver sessão ativa
-          document.getElementById('user-name').textContent = 'Não logado'
-        }
-      } catch (err) {
-        console.error('Erro inesperado:', err)
-      }
-    }
-
-    // 3) Chamar displayUserName quando a página carregar
-    window.addEventListener('DOMContentLoaded', displayUserName)
-
-    // 4) Função de sign out
-    async function handleSignOut() {
-      const { error } = await supabaseClient.auth.signOut()
-      if (error) {
-        console.error('Erro ao sair:', error)
-      } else {
-        // Redireciona após sign out
-        window.location.href = '/login.html'
-      }
-    }
-  </script>
-
-  <script>
     // Exemplo de uso do Chart.js (já está certo no seu código)
     const recentInvoicesChart = new Chart(document.getElementById('recentInvoicesChart'), {
       type: 'bar',
@@ -567,7 +249,7 @@
           legend: { display: false }
         }
       }
-    })
+    });
 
     const balanceDistributionChart = new Chart(document.getElementById('balanceDistributionChart'), {
       type: 'doughnut',
@@ -590,32 +272,32 @@
           }
         }
       }
-    })
+    });
 
     // Mobile Menu Toggle
-    const menuToggle = document.createElement('div')
-    menuToggle.className = 'menu-toggle'
-    menuToggle.innerHTML = '<i class="fas fa-bars"></i>'
-    document.querySelector('.top-bar').prepend(menuToggle)
+    const menuToggle = document.createElement('div');
+    menuToggle.className = 'menu-toggle';
+    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    document.querySelector('.top-bar').prepend(menuToggle);
 
     menuToggle.addEventListener('click', () => {
-      document.querySelector('.sidebar').classList.toggle('active')
-    })
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
 
     // Page Load Animation
     window.addEventListener('load', () => {
-      document.body.classList.add('loaded')
-    })
+      document.body.classList.add('loaded');
+    });
 
     // Botão de export (exemplo simples)
     document.getElementById('exportDataButton').addEventListener('click', () => {
       fetch('/export')
         .then(response => response.json())
         .then(data => {
-          console.log('Exported Data:', data)
+          console.log('Exported Data:', data);
         })
-        .catch(error => console.error('Erro ao exportar dados:', error))
-    })
+        .catch(error => console.error('Erro ao exportar dados:', error));
+    });
   </script>
 </body>
 </html>
