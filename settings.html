@@ -1,368 +1,51 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fatura</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <title>Supabase Test</title>
 </head>
-  <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
-}
-
-/* Style for the sidebar */
-.side-menu {
-  width: 50px; /* Initial collapsed width */
-  background-color: #6e6e6e;
-  color: #fff;
-  height: 100vh;
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  transition: width 0.3s ease; /* Smooth transition for width change */
-}
-
-.side-menu:hover {
-  width: 220px; /* Expanded width on hover */
-}
-
-/* Hide the text by default and show when expanded */
-.side-menu h2 {
-  text-align: right; /* Aligns the text inside the <h2> to the right */
-  margin-bottom: 20px; /* Optional: add space below the title */
-  visibility: hidden; /* Initially hide the text */
-  opacity: 0; /* Make the text fully transparent */
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
-}
-
-.side-menu:hover h2 {
-  visibility: visible; /* Make the text visible when sidebar is hovered */
-  opacity: 1; /* Make the text fully opaque when expanded */
-}
-
-.menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 10px 15px;
-}
-
-.menu-item a {
-  text-decoration: none; /* Remove the default underline for links */
-  color: inherit; /* Inherit color from the parent (so it doesn't change the text color) */
-  display: flex;
-  align-items: center;
-}
-
-.menu-item img {
-  width: 24px;  /* Icon size */
-  height: 24px; /* Ensure square icon */
-  margin-right: 10px; /* Space between icon and text */
-}
-
-/* Hover effect and active state for menu items */
-.menu-item:hover, .menu-item.active {
-  background-color: #334155;
-}
-
-/* Icon size adjustments */
-.menu-item img {
-  width: 24px;
-  height: 24px;
-  margin-right: 21px;
-  transition: transform 0.3s ease;
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(180deg); /* Adjust color */
-}
-
-/* Hide text when collapsed and show when expanded */
-.side-menu {
-  overflow: hidden; /* Prevent text overflow when collapsed */
-}
-
-.side-menu:hover .menu-item span {
-  opacity: 1; /* Show text on hover */
-  visibility: visible;
-}
-
-.menu-item span {
-  opacity: 0; /* Initially hide the text */
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
-}
-
-/* Container for content */
-.container {
-  margin-left: 280px; /* Adjust content margin for expanded sidebar */
-  padding: 20px;
-}
-
-/* Header section styling */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-h1 {
-  font-size: 24px;
-  color: #1e293b;
-}
-
-/* Button styling */
-.btn {
-  background-color: #4f46e5;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: #4338ca;
-}
-
-/* Content section styling */
-.content {
-  display: flex;
-  gap: 20px;
-}
-
-.section {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  flex: 1;
-}
-
-.section h2 {
-  margin-bottom: 15px;
-  font-size: 18px;
-  color: #4b5563;
-  border-bottom: 2px solid #4f46e5;
-  padding-bottom: 5px;
-}
-
-/* Form styling */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 5px;
-}
-
-.form-group input, .form-group select {
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-  color: #374151;
-}
-
-/* Table section styling */
-.table-section {
-  margin-top: 20px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-table th, table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
-}
-
-table th {
-  background-color: #f4f4f4;
-}
-
-/* Totals section */
-.totals {
-  text-align: right;
-  margin-top: 20px;
-}
-
-.totals p {
-  margin: 5px 0;
-  font-size: 16px;
-}
-
-.totals p strong {
-  font-size: 18px;
-  color: #1e293b;
-}
-
-.centered-text {
-  display: flex;               /* Use flexbox to align content */
-  justify-content: center;     /* Center horizontally */
-  align-items: center;         /* Center vertically */
-  height: 100vh;               /* Take up the full height of the viewport */
-  text-align: center;          /* Center the text */
-  background-color: #f0f0f0;   /* Optional: light background color for visibility */
-  font-size: 20px;             /* Optional: adjust font size */
-  }
-
-    .collapsible {
-      background-color: #f1f5f9;
-      color: #1e293b;
-      cursor: pointer;
-      padding: 15px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 16px;
-      text-align: left;
-      outline: none;
-      margin-bottom: 10px;
-    }
-
-    .collapsible.active {
-      background-color: #e2e8f0;
-    }
-  </style>
-
 <body>
-  <div class="side-menu">
-    <h2>Settings</h2>
-<ul class="menu">
-  <li class="menu-item">
-    <a href="dashboard.html">
-      <img src="img/dashboard.svg" alt="Dashboard">
-      Dashboard
-    </a>
-  </li>
-  <li class="menu-item">
-    <a href="invoice.html">
-      <img src="img/invoice.svg" alt="Invoicing">
-      Invoicing
-    </a>
-  </li>
-  <li class="menu-item">
-    <a href="commercial.html">
-      <img src="img/commercial.svg" alt="Commercial">
-      Commercial
-    </a>
-  </li>
-  <li class="menu-item">
-    <a href="accounting.html">
-      <img src="img/accounting.svg" alt="Accounting">
-      Accounting
-    </a>
-  </li>
-  <li class="menu-item">
-    <a href="financial.html">
-      <img src="img/financial.svg" alt="Financial">
-      Financial
-    </a>
-  </li>
-  <li class="menu-item active">
-    <a href="settings.html">
-      <img src="img/settings.svg" alt="Settings">
-      Settings
-    </a>
-  </li>
-</ul>
-  </div>
+  <h2>Supabase User Test</h2>
+  <p id="user-info">Fetching user data...</p>
 
-<div class="container">
-    <h1>Configurações</h1>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/+esm';
+
+    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
     
-    <!-- Seção de Configurações do Usuário -->
-    <button class="collapsible">Configurações do Usuário</button>
-    <div class="content" style="display: none;">
-      <form id="user-settings-form">
-        <div class="form-group">
-          <label for="name">Nome</label>
-          <input type="text" id="name" name="name" placeholder="Digite seu nome">
-        </div>
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input type="email" id="email" name="email" placeholder="Digite seu e-mail">
-        </div>
-      </form>
-    </div>
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-    <!-- Seção de Preferências do Sistema -->
-    <button class="collapsible">Preferências do Sistema</button>
-    <div class="content" style="display: none;">
-      <form id="system-preferences-form">
-        <div class="form-group">
-          <label for="language">Idioma</label>
-          <select id="language" name="language">
-            <option value="en">Inglês</option>
-            <option value="pt">Português</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="timezone">Fuso Horário</label>
-          <select id="timezone" name="timezone">
-            <option value="UTC-12">UTC-12</option>
-            <option value="UTC-11">UTC-11</option>
-            <option value="UTC-10">UTC-10</option>
-            <option value="UTC-9">UTC-9</option>
-            <option value="UTC-8">UTC-8</option>
-            <option value="UTC-7">UTC-7</option>
-            <option value="UTC-6">UTC-6</option>
-            <option value="UTC-5">UTC-5</option>
-            <option value="UTC-4">UTC-4</option>
-            <option value="UTC-3">UTC-3</option>
-            <option value="UTC-2">UTC-2</option>
-            <option value="UTC-1">UTC-1</option>
-            <option value="UTC+0">UTC+0 (GMT)</option>
-            <option value="UTC+1">UTC+1 (GMT+1)</option>
-            <option value="UTC+2">UTC+2 (GMT+2)</option>
-            <option value="UTC+3">UTC+3 (GMT+3)</option>
-            <option value="UTC+4">UTC+4 (GMT+4)</option>
-            <option value="UTC+5">UTC+5 (GMT+5)</option>
-            <option value="UTC+6">UTC+6 (GMT+6)</option>
-            <option value="UTC+7">UTC+7 (GMT+7)</option>
-            <option value="UTC+8">UTC+8 (GMT+8)</option>
-            <option value="UTC+9">UTC+9 (GMT+9)</option>
-            <option value="UTC+10">UTC+10 (GMT+10)</option>
-            <option value="UTC+11">UTC+11 (GMT+11)</option>
-            <option value="UTC+12">UTC+12 (GMT+12)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <button type="submit" class="btn">Salvar Alterações</button>
-        </div>
-      </form>
-    </div>
-</div>
-
-<script>
-  // Function to toggle collapsible sections
-  const collapsibles = document.querySelectorAll('.collapsible');
-  collapsibles.forEach(collapsible => {
-    collapsible.addEventListener('click', function() {
-      this.classList.toggle('active');
-      const content = this.nextElementSibling;
-      if (content.style.display === "none") {
-        content.style.display = "block";
-      } else {
-        content.style.display = "none";
+    async function fetchUser() {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError) {
+        console.error('Auth error:', authError.message);
+        document.getElementById('user-info').textContent = 'Auth error: ' + authError.message;
+        return;
       }
-    });
-  });
-</script>
+
+      if (user) {
+        const { data, error: userError } = await supabase
+          .from('users') // Table name
+          .select('username') // Column name
+          .eq('id', user.id) // Matching by user ID
+          .single();
+
+        if (userError) {
+          console.error('User fetch error:', userError.message);
+          document.getElementById('user-info').textContent = 'User fetch error: ' + userError.message;
+          return;
+        }
+
+        document.getElementById('user-info').textContent = `Hello, ${data.username || 'Unknown User'}!`;
+      } else {
+        document.getElementById('user-info').textContent = 'No user found.';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', fetchUser);
+  </script>
 </body>
 </html>
