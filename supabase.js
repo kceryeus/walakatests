@@ -62,9 +62,9 @@ async function displayUserName() {
 
   if (user) {
     const { data, error: profileError } = await supabase
-      .from('profiles') // Assuming the table is called 'profiles'
+      .from('users') // Assuming the table is called 'profiles'
       .select('username') // Assuming the column is called 'username'
-      .eq('id', user.id) // Matching by user ID
+      .eq('id', users.id) // Matching by user ID
       .single();
 
     if (profileError) {
@@ -72,7 +72,7 @@ async function displayUserName() {
       return;
     }
 
-    const userNameSpan = document.getElementById('user-name');
+    const userNameSpan = document.querySelector('.user-profile span');
     if (userNameSpan) {
       userNameSpan.textContent = data.username || 'Unknown User';
     }
