@@ -14,83 +14,7 @@
     const supabase = supabase.createClient(supabaseUrl, supabaseKey)
   </script>
   <style>
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--background-color);
-      color: #1e293b;
-      min-height: 100vh;
-      overflow-x: hidden;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
-    }
-
-    body.loaded {
-      opacity: 1;
-    }
-
-    .container {
-      margin-left: 280px;
-      padding: 20px;
-      display: block;
-      width: 800px;
-    }
-
-        /* Sidebar */
-        .sidebar {
-      background: linear-gradient(195deg, #007ec7, #02204e);
-      color: white;
-      padding: 2rem 1.5rem;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      transition: transform var(--transition-speed) ease;
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 1rem;
-      border-radius: var(--card-radius);
-      transition: all var(--transition-speed) ease;
-    }
-
-    .logo:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .nav-menu {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.75rem 1rem;
-      border-radius: var(--card-radius);
-      color: #94a3b8;
-      text-decoration: none;
-      transition: all var(--transition-speed) ease;
-    }
-
-    .nav-item:hover,
-    .nav-item.active {
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-    }
-
-    .nav-item i {
-      width: 24px;
-      text-align: center;
-    }
+  
 
     .header {
       display: flex;
@@ -115,12 +39,6 @@
 
     .btn:hover {
       background-color: #005f99; /* Darker shade of corporate blue */
-    }
-
-    .content {
-      display: flex;
-      gap: 20px;
-      width: 800px;
     }
 
     .section {
