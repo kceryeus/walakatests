@@ -110,9 +110,9 @@
     }
 
     .content {
-      display: flex;
-      gap: 20px;
-      width: 800px;
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
     }
 
     .section {
