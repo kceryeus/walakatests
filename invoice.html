@@ -14,43 +14,13 @@
     const supabase = supabase.createClient(supabaseUrl, supabaseKey)
   </script>
   <style>
-:root {
-      --primary-color: #007ec7; /* Corporate blue */
-      --secondary-color: #4f46e5;
-      --accent-color: #818cf8;
-      --background-color: #f8fafc;
-      --sidebar-width: 280px;
-      --topbar-height: 80px;
-      --card-radius: 16px;
-      --transition-speed: 0.3s;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--background-color);
-      color: #1e293b;
-      min-height: 100vh;
-      overflow-x: hidden;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
     }
 
-    body.loaded {
-      opacity: 1;
-    }
-
-    .content {
-      display: grid;
-      grid-template-columns: var(--sidebar-width) 1fr;
-      min-height: 100vh;
-    }
-
+    
         /* Sidebar */
         .sidebar {
       background: linear-gradient(195deg, #007ec7, #02204e);
@@ -440,11 +410,11 @@
         WALAKA
       </div>
       <div class="nav-menu">
-        <a href="dashboard.html" class="nav-item ">
+        <a href="#" class="nav-item active">
           <i class="fas fa-home"></i>
           Dashboard
         </a>
-        <a href="invoice.html" class="nav-item active">
+        <a href="invoice.html" class="nav-item">
           <i class="fas fa-file-invoice"></i>
           Faturas
         </a>
