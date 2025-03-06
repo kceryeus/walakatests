@@ -9,7 +9,7 @@
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script>
     // Initialize Supabase client
-    const supabaseUrl = https://zkqjmozftqmyaycpmlxn.supabase.co'
+    const supabaseUrl = https://zkqjmozftqmyaycpmlxn.supabase.co' 
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk'
     const supabase = supabase.createClient(supabaseUrl, supabaseKey)
   </script>
@@ -20,84 +20,61 @@
       background-color: #f8f9fa;
     }
 
-    .side-menu {
-      width: 50px;
-      background-color: #007ec7; /* Corporate blue */
-      color: #fff;
+        /* Sidebar */
+        .sidebar {
+      background: linear-gradient(195deg, #007ec7, #02204e);
+      color: white;
+      padding: 2rem 1.5rem;
+      position: sticky;
+      top: 0;
       height: 100vh;
-      position: fixed;
       display: flex;
       flex-direction: column;
-      padding: 10px;
-      transition: width 0.3s ease;
-      overflow: hidden;
+      gap: 2rem;
+      transition: transform var(--transition-speed) ease;
     }
 
-    .side-menu:hover {
-      width: 220px;
-    }
-
-    .side-menu h2 {
-      text-align: right;
-      margin-bottom: 20px;
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-
-    .side-menu:hover h2 {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .menu {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .menu-item {
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      padding: 10px 15px;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--card-radius);
+      transition: all var(--transition-speed) ease;
     }
 
-    .menu-item a {
+    .logo:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--card-radius);
+      color: #94a3b8;
       text-decoration: none;
-      color: inherit;
-      display: flex;
-      align-items: center;
+      transition: all var(--transition-speed) ease;
     }
 
-    .menu-item i {
-      width: 24px;
-      height: 24px;
-      margin-right: 10px;
-      transition: transform 0.3s ease;
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.05);
       color: white;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    .menu-item:hover, .menu-item.active {
-      background-color: #007ec7; /* Corporate blue */
-    }
-
-    .menu-item:hover i {
-      transform: scale(1.1); /* Slight zoom effect on hover */
-    }
-
-    .side-menu:hover .menu-item span {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .menu-item span {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
+    .nav-item i {
+      width: 24px;
+      text-align: center;
     }
 
     .container {
@@ -424,58 +401,44 @@
             margin-right: 5px;
             vertical-align: middle; /* Align icon with text */
              filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg); /* keep original icon color */
-        
+        }
 
   </style>
 </head>
 <body>
-  <div class="side-menu">
-    <h2>Invoice</h2>
-    <ul class="menu">
-      <li class="menu-item">
-        <a href="dashboard.html">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>Dashboard</span>
+  <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <i class="fas fa-chart-line"></i>
+        WALAKA
+      </div>
+      <div class="nav-menu">
+        <a href="#" class="nav-item active">
+          <i class="fas fa-home"></i>
+          Dashboard
         </a>
-      </li>
-      <li class="menu-item active">
-        <a href="invoice.html">
+        <a href="invoice.html" class="nav-item">
           <i class="fas fa-file-invoice"></i>
-          <span>Invoicing</span>
+          Faturas
         </a>
-      </li>
-      <li class="menu-item">
-        <a href="commercial.html">
-          <i class="fas fa-shopping-cart"></i>
-          <span>Commercial</span>
+        <a href="#" class="nav-item">
+          <i class="fas fa-wallet"></i>
+          Contas
         </a>
-      </li>
-      <li class="menu-item">
-        <a href="accounting.html">
-          <i class="fas fa-calculator"></i>
-          <span>Accounting</span>
+        <a href="#" class="nav-item">
+          <i class="fas fa-chart-pie"></i>
+          Relatórios
         </a>
-      </li>
-      <li class="menu-item">
-        <a href="financial.html">
-          <i class="fas fa-chart-line"></i>
-          <span>Financial</span>
-        </a>
-      </li>
-      <li class="menu-item">
-        <a href="settings.html">
+        <a href="#" class="nav-item">
           <i class="fas fa-cog"></i>
-          <span>Settings</span>
+          Configurações
         </a>
-      </li>
-      <li class="menu-item" id="signout-btn">
-        <a href="#" onclick="handleSignOut()">
+        <a href="#" class="nav-item" onclick="handleSignOut()">
           <i class="fas fa-sign-out-alt"></i>
           <span>Sign Out</span>
         </a>
-      </li>
-    </ul>
-  </div>
+      </div>
+    </nav>
 
   <div class="container">
     <div class="header">
