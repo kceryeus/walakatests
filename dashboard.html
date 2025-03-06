@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WALAKA</title>
+  
+  <!-- Bibliotecas externas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Importando Supabase (certifique-se de que vem ANTES do seu script) -->
   <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    rel="stylesheet"
+  />
+
   <style>
     :root {
-      --primary-color:#007ec7; /* Corporate blue */
+      --primary-color: #007ec7; /* Corporate blue */
       --secondary-color: #4f46e5;
       --accent-color: #818cf8;
       --background-color: #f8fafc;
@@ -372,17 +381,15 @@
             <i class="fas fa-bell"></i>
             <span class="badge">3</span>
           </div>
-<div class="user-profile">
-  <div class="avatar">
-    <i class="fas fa-user"></i>
-  </div>
-  <span id="user-name">Loading...</span> <!-- Updated with an ID for easier targeting -->
-</div>
-
-            <button class="sign-out-btn" onclick="handleSignOut()">
-              <i class="fas fa-sign-out-alt"></i>
-            </button>
+          <div class="user-profile">
+            <div class="avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span id="user-name">Loading...</span>
           </div>
+          <button class="sign-out-btn" onclick="handleSignOut()">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
         </div>
       </div>
 
@@ -392,7 +399,7 @@
           <i class="fas fa-plus"></i>
           <span>Criar Factura</span>
         </div>
-        <div class="quick-action-card" onclick="showCachedInvoices()">
+        <div class="quick-action-card">
           <i class="fas fa-list"></i>
           <span>Exibir Facturas</span>
         </div>
@@ -467,47 +474,69 @@
     </main>
   </div>
 
-<script>
-      // Initialize SUPABASE
-        const { createClient } = supabase
-        const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-    
-    // Fetch and display the user's name
-async function displayUserName() {
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error) {
-    console.error('Error fetching user:', error.message);
-    return;
-  }
-
-  if (user) {
-    const { data, error: profileError } = await supabase
-      .from('users') // Assuming the table is called 'profiles'
-      .select('username') // Assuming the column is called 'username'
-      .eq('id', user.id) // Matching by user ID
-      .single();
-
-    if (profileError) {
-      console.error('Error fetching profile:', profileError.message);
-      return;
-    }
-
-    const userNameSpan = document.getElementById('user-name');
-    if (userNameSpan) {
-      userNameSpan.textContent = data.username || 'Unknown User';
-    }
-  }
-}
-
-// Call the function when the page loads
-window.addEventListener('DOMContentLoaded', displayUserName);
-</script>
-  
+  <!-- SEÇÃO DE SCRIPTS -->
   <script>
-    // Initialize Charts
+    // 1) Criar o cliente Supabase (A ORDEM importa!)
+    //    Substitua pela sua URL e KEY
+    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
+    // 'supabase' vem do script importado via 
+    <script src="https://unpkg.com/@supabase/supabase-js"></script>
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey)
+
+    // 2) Buscar dados de usuário logado e exibir
+    async function displayUserName() {
+      try {
+        // Retorna { data: { user }, error }
+        const { data: { user }, error } = await supabaseClient.auth.getUser()
+        if (error) {
+          console.error('Erro ao buscar usuário:', error.message)
+          return
+        }
+        
+        if (user) {
+          // Ajuste o nome da tabela e coluna conforme seu banco
+          const { data: profileData, error: profileError } = await supabaseClient
+            .from('users')       // Tabela
+            .select('username')  // Coluna
+            .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
+            .single()
+
+          if (profileError) {
+            console.error('Erro ao buscar perfil:', profileError.message)
+            return
+          }
+
+          const userNameSpan = document.getElementById('user-name')
+          if (userNameSpan) {
+            userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido'
+          }
+        } else {
+          // Se não houver sessão ativa
+          document.getElementById('user-name').textContent = 'Não logado'
+        }
+      } catch (err) {
+        console.error('Erro inesperado:', err)
+      }
+    }
+
+    // 3) Chamar displayUserName quando a página carregar
+    window.addEventListener('DOMContentLoaded', displayUserName)
+
+    // 4) Função de sign out
+    async function handleSignOut() {
+      const { error } = await supabaseClient.auth.signOut()
+      if (error) {
+        console.error('Erro ao sair:', error)
+      } else {
+        // Redireciona após sign out
+        window.location.href = '/login.html'
+      }
+    }
+  </script>
+
+  <script>
+    // Exemplo de uso do Chart.js (já está certo no seu código)
     const recentInvoicesChart = new Chart(document.getElementById('recentInvoicesChart'), {
       type: 'bar',
       data: {
@@ -528,7 +557,7 @@ window.addEventListener('DOMContentLoaded', displayUserName);
             beginAtZero: true,
             grid: { color: '#e2e8f0' },
             ticks: {
-              callback: value => `${(value/1000).toFixed(0)}k MZN`
+              callback: value => `${(value / 1000).toFixed(0)}k MZN`
             }
           },
           x: {
@@ -539,7 +568,7 @@ window.addEventListener('DOMContentLoaded', displayUserName);
           legend: { display: false }
         }
       }
-    });
+    })
 
     const balanceDistributionChart = new Chart(document.getElementById('balanceDistributionChart'), {
       type: 'doughnut',
@@ -557,45 +586,37 @@ window.addEventListener('DOMContentLoaded', displayUserName);
           legend: { position: 'bottom' },
           tooltip: {
             callbacks: {
-              label: ctx => `${ctx.label}: ${(ctx.raw/1000).toFixed(1)}k MZN`
+              label: ctx => `${ctx.label}: ${(ctx.raw / 1000).toFixed(1)}k MZN`
             }
           }
         }
       }
-    });
+    })
 
     // Mobile Menu Toggle
-    const menuToggle = document.createElement('div');
-    menuToggle.className = 'menu-toggle';
-    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-    document.querySelector('.top-bar').prepend(menuToggle);
+    const menuToggle = document.createElement('div')
+    menuToggle.className = 'menu-toggle'
+    menuToggle.innerHTML = '<i class="fas fa-bars"></i>'
+    document.querySelector('.top-bar').prepend(menuToggle)
 
     menuToggle.addEventListener('click', () => {
-      document.querySelector('.sidebar').classList.toggle('active');
-    });
+      document.querySelector('.sidebar').classList.toggle('active')
+    })
 
     // Page Load Animation
     window.addEventListener('load', () => {
-      document.body.classList.add('loaded');
-    });
+      document.body.classList.add('loaded')
+    })
 
+    // Botão de export (exemplo simples)
     document.getElementById('exportDataButton').addEventListener('click', () => {
       fetch('/export')
         .then(response => response.json())
         .then(data => {
-          console.log('Exported Data:', data);
+          console.log('Exported Data:', data)
         })
-        .catch(error => console.error('Error exporting data:', error));
-    });
-
-    async function handleSignOut() {
-      try {
-        await supabase.auth.signOut();
-        window.location.href = '/login.html';
-      } catch (error) {
-        console.error('Error signing out:', error);
-      }
-    }
+        .catch(error => console.error('Erro ao exportar dados:', error))
+    })
   </script>
 </body>
 </html>
