@@ -72,7 +72,7 @@ async function displayUserName() {
       return;
     }
 
-    const userNameSpan = document.querySelector('.user-profile span');
+    const userNameSpan = document.getElementById('user-name');
     if (userNameSpan) {
       userNameSpan.textContent = data.username || 'Unknown User';
     }
