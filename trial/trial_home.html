@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fatura</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script src="../js/scripts/windowload.js"></script>
+</head>
+  <style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Style for the sidebar */
+.side-menu {
+  width: 50px; /* Initial collapsed width */
+  background-color: #6e6e6e;
+  color: #fff;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  transition: width 0.3s ease; /* Smooth transition for width change */
+}
+
+.side-menu:hover {
+  width: 220px; /* Expanded width on hover */
+}
+
+/* Hide the text by default and show when expanded */
+.side-menu h2 {
+  text-align: right; /* Aligns the text inside the <h2> to the right */
+  margin-bottom: 20px; /* Optional: add space below the title */
+  visibility: hidden; /* Initially hide the text */
+  opacity: 0; /* Make the text fully transparent */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
+}
+
+.side-menu:hover h2 {
+  visibility: visible; /* Make the text visible when sidebar is hovered */
+  opacity: 1; /* Make the text fully opaque when expanded */
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+}
+
+.menu-item a {
+  text-decoration: none; /* Remove the default underline for links */
+  color: inherit; /* Inherit color from the parent (so it doesn't change the text color) */
+  display: flex;
+  align-items: center;
+}
+
+.menu-item img {
+  width: 24px;  /* Icon size */
+  height: 24px; /* Ensure square icon */
+  margin-right: 10px; /* Space between icon and text */
+}
+
+/* Hover effect and active state for menu items */
+.menu-item:hover, .menu-item.active {
+  background-color: #334155;
+}
+
+/* Icon size adjustments */
+.menu-item img {
+  width: 24px;
+  height: 24px;
+  margin-right: 21px;
+  transition: transform 0.3s ease;
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(180deg); /* Adjust color */
+}
+
+/* Hide text when collapsed and show when expanded */
+.side-menu {
+  overflow: hidden; /* Prevent text overflow when collapsed */
+}
+
+.side-menu:hover .menu-item span {
+  opacity: 1; /* Show text on hover */
+  visibility: visible;
+}
+
+.menu-item span {
+  opacity: 0; /* Initially hide the text */
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
+}
+
+/* Container for content */
+.container {
+  margin-left: 280px; /* Adjust content margin for expanded sidebar */
+  padding: 20px;
+}
+
+/* Header section styling */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 24px;
+  color: #1e293b;
+}
+
+/* Button styling */
+.btn {
+  background-color: #4f46e5;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #4338ca;
+}
+
+/* Content section styling */
+.content {
+  gap: 20px;
+}
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    color: #fff;
+  }
+
+  .modal-close {
+    cursor: pointer;
+    font-size: 24px;
+    color: #fff;
+  }
+  .top-bar {
+    background-color: #6e6e6e;
+    padding: 10px;
+    text-align: right;
+  }
+  .top-bar-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .top-bar-menu li {
+    display: inline;
+    margin: 0 15px;
+  }
+  .top-bar-menu li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  .top-bar-menu li a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Blocks styling */
+  .module {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .module h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .module .price {
+    font-size: 20px;
+    color: #4f46e5;
+  }
+
+      .inactive {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+    .hidden {
+      display: none;
+    }
+
+    body {
+    opacity: 0;  /* Start with the body invisible */
+    transition: opacity 0.5s ease-in-out;  /* Transition for fade-in effect */
+  }
+
+  body.loaded {
+    opacity: 1;  /* When the page is fully loaded, fade in */
+  .container {
+    padding: 20px;
+  }
+  }
+  </style>
+
+<body>
+  <div class="side-menu">
+    <h2>Home</h2>
+<ul class="menu">
+  <li class="menu-item">
+    <a href="dashboard.html">
+      <img src="../assets/img/icons/dashboard.svg" alt="Dashboard">
+      Dashboard
+    </a>
+  </li>
+  <li class="menu-item">
+    <a href="modules/invoice.html">
+      <img src="../assets/img/icons/invoice.svg" alt="Invoicing">
+      Invoicing
+    </a>
+  </li>
+  <li class="menu-item">
+    <a href="modules/commercial.html">
+      <img src="../assets/img/icons/commercial.svg" alt="Commercial">
+      Commercial
+    </a>
+  </li>
+  <li class="menu-item">
+    <a href="modules/accounting.html">
+      <img src="../assets/img/icons/accounting.svg" alt="Accounting">
+      Accounting
+    </a>
+  </li>
+  <li class="menu-item">
+    <a href="modules/financial.html">
+      <img src="../assets/img/icons/financial.svg" alt="Financial">
+      Financial
+    </a>
+  </li>
+  <li class="menu-item">
+    <a href="settings.html">
+      <img src="../assets/img/icons/settings.svg" alt="Settings">
+      Settings
+    </a>
+  </li>
+</ul>
+</div>
+   <!-- Barra superior -->
+   <div class="top-bar">
+    <ul class="top-bar-menu">
+      <li><a href="contact.html">Contacto</a></li>
+      <li><a href="about.html">Sobre</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Button to Open Modal -->
+  <div class="container">
+    <button class="btn" onclick="openModal()">Módulos</button>
+  </div>
+
+  <!-- Modal for blocks -->
+  <div id="blocksModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Gerir Módulos</h3>
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="module">
+        <h3>Invoice</h3>
+        <p class="price">Preço: MZN 149</p>
+      </div>
+      <div class="module">
+        <h3>Commercial</h3>
+        <p class="price">Preço: MZN 199</p>
+      </div>
+      <div class="module">
+        <h3>Accounting</h3>
+        <p class="price">Preço: MZN 249</p>
+      </div>
+      <div class="module">
+        <h3>Financial</h3>
+        <p class="price">Preço: MZN 299</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entities, Banks, and Cashiers Section -->
+  <div class="container">
+    <h2>Entidades (Clientes)</h2>
+    <!-- Formulário para adicionar clientes -->
+    <form id="addClientForm">
+      <input type="text" id="clientName" placeholder="Nome do Cliente" required>
+      <input type="text" id="clientAddress" placeholder="Endereço" required>
+      <input type="text" id="clientNUIT" placeholder="NUIT" required>
+      <input type="email" id="clientEmail" placeholder="Email" required>
+      <button type="submit" class="btn">Adicionar Cliente</button>
+    </form>
+
+    <!-- Campo de pesquisa -->
+    <input type="text" id="searchClient" placeholder="Pesquisar cliente..." oninput="searchClients()">
+
+    <!-- Botão para expandir/comprimir a lista -->
+    <button class="btn" onclick="toggleClientList()">Comprimir Lista</button>
+
+    <!-- Lista de clientes -->
+    <div id="clientList">
+      <h3>Clientes Cadastrados</h3>
+      <ul id="clients"></ul>
+    </div>
+
+    <!-- Botões para editar e inativar clientes -->
+    <button class="btn" onclick="editClient()">Editar Cliente</button>
+    <button class="btn" onclick="inactivateClient()">Inativar Cliente</button>
+  </div>
+
+  <script>
+    // Array para armazenar clientes
+    let clients = [];
+
+    // Função para adicionar cliente
+    document.getElementById('addClientForm').addEventListener('submit', function (e) {
+      e.preventDefault(); // Evita o recarregamento da página
+
+      // Captura os dados do formulário
+      const clientName = document.getElementById('clientName').value;
+      const clientAddress = document.getElementById('clientAddress').value;
+      const clientNUIT = document.getElementById('clientNUIT').value;
+      const clientEmail = document.getElementById('clientEmail').value;
+
+      // Cria um objeto cliente
+      const client = {
+        name: clientName,
+        address: clientAddress,
+        nuit: clientNUIT,
+        email: clientEmail,
+        active: true // Por padrão, o cliente é ativo
+      };
+
+      // Adiciona o cliente ao array
+      clients.push(client);
+
+      // Limpa o formulário
+      document.getElementById('addClientForm').reset();
+
+      // Atualiza a lista de clientes na página
+      updateClientList();
+    });
+
+    // Função para atualizar a lista de clientes
+    function updateClientList() {
+      const clientList = document.getElementById('clients');
+      clientList.innerHTML = ''; // Limpa a lista atual
+
+      // Adiciona cada cliente à lista
+      clients.forEach((client, index) => {
+        const li = document.createElement('li');
+        li.className = client.active ? '' : 'inactive'; // Adiciona classe para clientes inativos
+        li.innerHTML = `
+          <strong>${client.name}</strong> - ${client.address} (NUIT: ${client.nuit}, Email: ${client.email})
+          <button onclick="editClient(${index})">Editar</button>
+          <button onclick="inactivateClient(${index})">${client.active ? 'Inativar' : 'Ativar'}</button>
+        `;
+        clientList.appendChild(li);
+      });
+    }
+
+    // Função para editar cliente
+    function editClient(index) {
+      const client = clients[index];
+
+      // Preenche o formulário com os dados do cliente
+      document.getElementById('clientName').value = client.name;
+      document.getElementById('clientAddress').value = client.address;
+      document.getElementById('clientNUIT').value = client.nuit;
+      document.getElementById('clientEmail').value = client.email;
+
+      // Remove o cliente da lista para edição
+      clients.splice(index, 1);
+
+      // Atualiza a lista de clientes
+      updateClientList();
+    }
+
+    // Função para inativar/ativar cliente
+    function inactivateClient(index) {
+      clients[index].active = !clients[index].active; // Alterna entre ativo e inativo
+      updateClientList(); // Atualiza a lista de clientes
+    }
+
+    // Função para pesquisar clientes
+    function searchClients() {
+      const searchTerm = document.getElementById('searchClient').value.toLowerCase();
+      const filteredClients = clients.filter(client =>
+        client.name.toLowerCase().includes(searchTerm) ||
+        client.address.toLowerCase().includes(searchTerm) ||
+        client.nuit.toLowerCase().includes(searchTerm) ||
+        client.email.toLowerCase().includes(searchTerm)
+      );
+
+      // Atualiza a lista com os clientes filtrados
+      const clientList = document.getElementById('clients');
+      clientList.innerHTML = ''; // Limpa a lista atual
+
+      filteredClients.forEach((client, index) => {
+        const li = document.createElement('li');
+        li.className = client.active ? '' : 'inactive'; // Adiciona classe para clientes inativos
+        li.innerHTML = `
+          <strong>${client.name}</strong> - ${client.address} (NUIT: ${client.nuit}, Email: ${client.email})
+          <button onclick="editClient(${index})">Editar</button>
+          <button onclick="inactivateClient(${index})">${client.active ? 'Inativar' : 'Ativar'}</button>
+        `;
+        clientList.appendChild(li);
+      });
+    }
+
+    // Função para expandir/comprimir a lista
+    function toggleClientList() {
+      const clientList = document.getElementById('clientList');
+      const toggleButton = document.querySelector('.container .btn');
+
+      if (clientList.classList.contains('hidden')) {
+        clientList.classList.remove('hidden');
+        toggleButton.textContent = 'Comprimir Lista';
+      } else {
+        clientList.classList.add('hidden');
+        toggleButton.textContent = 'Expandir Lista';
+      }
+    }
+
+    // Funções para abrir e fechar o modal
+    function openModal() {
+      document.getElementById('blocksModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('blocksModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

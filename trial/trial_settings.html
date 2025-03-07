@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supabase Test</title>
+</head>
+<body>
+  <h2>Supabase User Test</h2>
+  <p id="user-info">Fetching user data...</p>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/+esm';
+
+    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function fetchUser() {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError) {
+        console.error('Auth error:', authError.message);
+        document.getElementById('user-info').textContent = 'Auth error: ' + authError.message;
+        return;
+      }
+
+      if (user) {
+        const { data, error: userError } = await supabase
+          .from('users') // Table name
+          .select('username') // Column name
+          .eq('id', user.id) // Matching by user ID
+          .single();
+
+        if (userError) {
+          console.error('User fetch error:', userError.message);
+          document.getElementById('user-info').textContent = 'User fetch error: ' + userError.message;
+          return;
+        }
+
+        document.getElementById('user-info').textContent = `Hello, ${data.username || 'Unknown User'}!`;
+      } else {
+        document.getElementById('user-info').textContent = 'No user found.';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', fetchUser);
+  </script>
+</body>
+</html>

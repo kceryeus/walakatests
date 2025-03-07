@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WALAKA - Soluções Empresariais</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Esquema de Cores Corporativo Moderno */
+    :root {
+      --primary: #2563eb;
+      --secondary: #1d4ed8;
+      --accent: #10b981;
+      --dark: #111827;
+      --light: #f9fafb;
+      --gray: #6b7280;
+    }
+
+    /* Estilos Base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background: var(--light);
+    }
+
+    /* Cabeçalho */
+    .landing-header {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 2rem;
+      color: var(--primary);
+      letter-spacing: -1px;
+      text-shadow: 0 2px 4px rgba(37,99,235,0.1);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 3.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark);
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      font-size: 1.05rem;
+    }
+
+    .nav-links a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2.5px;
+      bottom: -4px;
+      left: 0;
+      background: var(--primary);
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    .nav-links a:hover:after {
+      width: 100%;
+    }
+
+    .nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-buttons .btn {
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-trial {
+      background: var(--primary);
+      color: white;
+      border: none;
+      box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+    }
+
+    .btn-trial:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(37,99,235,0.3);
+    }
+
+    .btn-login {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-login:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .search-bar {
+      padding: 0.8rem;
+      border: 1px solid var(--gray);
+      border-radius: 5px;
+      font-size: 1rem;
+      width: 0;
+      opacity: 0;
+      transition: width 0.4s ease, opacity 0.4s ease;
+      position: absolute;
+      right: 40px; /* Adjust position */
+      z-index: 1;
+    }
+
+    .search-icon {
+      font-size: 1.5rem;
+      color: var(--primary);
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .search-icon:hover {
+      color: var(--secondary);
+    }
+
+    .search-icon:focus + .search-bar,
+    .search-bar:focus {
+      width: 200px;
+      opacity: 1;
+      outline: none;
+    }
+
+    .language-toggle {
+      padding: 0.4rem; /* Reduced padding for smaller size */
+      border: 1px solid var(--gray);
+      border-radius: 5px;
+      font-size: 0.6rem; /* 40% smaller */
+      transition: border-color 0.3s ease;
+    }
+
+    .language-toggle:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    /* Seção Hero */
+    .hero {
+      padding: 12rem 2rem 8rem;
+      background: linear-gradient(135deg, #f9fafb 0%, #e0f2fe 100%);
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 1.8rem;
+      color: var(--dark);
+      letter-spacing: -1.5px;
+      line-height: 1.2;
+      background: linear-gradient(to right, var(--dark), var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.4rem;
+      color: var(--gray);
+      margin-bottom: 3rem;
+      max-width: 750px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* Grade de Recursos */
+    .modules-container {
+      max-width: 1400px;
+      margin: 7rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 3rem;
+    }
+
+    .module {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(37,99,235,0.05) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .module:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.12);
+    }
+
+    .module:hover::before {
+      opacity: 1;
+    }
+
+    .module-icon {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 2rem;
+    }
+
+    .module h3 {
+      font-size: 2rem;
+      margin-bottom: 1.2rem;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .module-price {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 1.8rem 0;
+    }
+
+    .module-price span {
+      font-size: 1.2rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .module-features {
+      list-style: none;
+      margin: 2.5rem 0;
+    }
+
+    .module-features li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      font-size: 1.15rem;
+      color: var(--gray);
+    }
+
+    .module-features i {
+      color: var(--accent);
+      margin-right: 1rem;
+      font-size: 1.3rem;
+    }
+
+    /* Selos de Confiança */
+    .trust-section {
+      text-align: center;
+      padding: 6rem 2rem;
+      background: white;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .trust-section h3 {
+      font-size: 2rem;
+      color: var(--dark);
+      margin-bottom: 3rem;
+    }
+
+    .trust-logos {
+      display: flex;
+      justify-content: center;
+      gap: 5rem;
+      flex-wrap: wrap;
+      margin-top: 3.5rem;
+    }
+
+    .trust-logos img {
+      height: 50px;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      filter: grayscale(100%);
+    }
+
+    .trust-logos img:hover {
+      opacity: 1;
+      filter: grayscale(0%);
+      transform: scale(1.05);
+    }
+
+    /* Rodapé */
+    .landing-footer {
+      background: var(--dark);
+      color: white;
+      padding: 1.7rem 2rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4rem;
+    }
+
+    .footer-section h4 {
+      margin-bottom: 0.5rem;
+      color: white;
+      font-size: 1.7rem;
+      font-weight: 600;
+    }
+
+    .footer-section p {
+      color: #9ca3af;
+      line-height: 1.8;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.8rem;
+      transition: all 0.3s ease;
+      font-size: 1.05rem;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      transform: translateX(5px);
+    }
+
+    /* Design Responsivo */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 1.7rem;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+      }
+
+      .modules-container {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const languageToggle = document.querySelector('.language-toggle');
+      const elementsToTranslate = {
+        'pt': {
+          'logo': 'WALAKA',
+          'solutions': 'Soluções',
+          'pricing': 'Preços',
+          'resources': 'Recursos',
+          'searchPlaceholder': 'Buscar...',
+          'trialButton': 'Iniciar Teste Gratuito',
+          'loginButton': 'Entrar',
+          'heroTitle': 'Impulsione o Crescimento da Sua Empresa',
+          'heroText': 'Plataforma unificada de gestão empresarial projectada para empresas modernas. Optimize operações, gerencie finanças e melhore relacionamentos com clientes.',
+          'module1Title': 'Facturação Inteligente',
+          'module1Price': 'MZN 149',
+          'module1Features': [
+            'Facturação automática',
+            'Facturas recorrentes',
+            'Suporte multi-moeda',
+            'Rastreamento de pagamentos'
+          ],
+          'module2Title': 'Suite Comercial',
+        //  'module2Price': 'MZN 199',
+          'module2Features': [
+            'Em Desenvolvimento',
+        //    'Rastreamento de pedidos',
+        //    'Gestão de fornecedores',
+        //    'Integração CRM'
+          ],
+          'module3Title': 'Contabilidade Pro',
+         // 'module3Price': 'MZN 249',
+          'module3Features': [
+            'Em Desenvolvimento',
+         //   'Conformidade fiscal',
+         //   'Previsão orçamentária',
+         //   'Suporte multi-empresa'
+          ],
+          'module4Title': 'Suite Financeira',
+         // 'module4Price': 'MZN 299',
+          'module4Features': [
+            'Em Desenvolvimento',
+         //   'Gestão CP/CR',
+         //   'Painéis financeiros',
+         //   'Trilhas de auditoria'
+          ],
+          'footerText': 'Soluções empresariais para os desafios do amanhã.'
+        },
+        'en': {
+          'logo': 'WALAKA',
+          'solutions': 'Solutions',
+          'pricing': 'Pricing',
+          'resources': 'Resources',
+          'searchPlaceholder': 'Search...',
+          'trialButton': 'Start Free Trial',
+          'loginButton': 'Login',
+          'heroTitle': 'Boost Your Company\'s Growth',
+          'heroText': 'Unified business management platform designed for modern companies. Optimize operations, manage finances, and improve customer relationships.',
+          'module1Title': 'Smart Invoicing',
+          'module1Price': 'MZN 149',
+          'module1Features': [
+            'Automatic invoicing',
+            'Recurring invoices',
+            'Multi-currency support',
+            'Payment tracking'
+          ],
+          'module2Title': 'Business Suite',
+        //  'module2Price': 'MZN 199',
+          'module2Features': [
+            'Under Development',
+        //    'Order tracking',
+        //    'Supplier management',
+        //    'CRM integration'
+          ],
+          'module3Title': 'Pro Accounting',
+        //  'module3Price': 'MZN 249',
+          'module3Features': [
+            'Under Development',
+        //    'Tax compliance',
+        //    'Budget forecasting',
+        //    'Multi-company support'
+          ],
+          'module4Title': 'Financial Suite',
+        //  'module4Price': 'MZN 299',
+          'module4Features': [
+            'Under Development',
+        //    'AP/AR management',
+        //    'Financial dashboards',
+        //    'Audit trails'
+          ],
+          'footerText': 'Business solutions for tomorrow\'s challenges.'
+        }
+      };
+
+      function translatePage(language) {
+        document.querySelector('.logo').textContent = elementsToTranslate[language].logo;
+        document.querySelector('.nav-links a[href="#features"]').textContent = elementsToTranslate[language].solutions;
+        document.querySelector('.nav-links a[href="#pricing"]').textContent = elementsToTranslate[language].pricing;
+        document.querySelector('.nav-links a[href="#resources"]').textContent = elementsToTranslate[language].resources;
+        document.querySelector('.search-bar').placeholder = elementsToTranslate[language].searchPlaceholder;
+        document.querySelector('.btn-trial').textContent = elementsToTranslate[language].trialButton;
+        document.querySelector('.btn-login').textContent = elementsToTranslate[language].loginButton;
+        document.querySelector('.hero h1').textContent = elementsToTranslate[language].heroTitle;
+        document.querySelector('.hero p').textContent = elementsToTranslate[language].heroText;
+
+        const modules = document.querySelectorAll('.module');
+        modules[0].querySelector('h3').textContent = elementsToTranslate[language].module1Title;
+        modules[0].querySelector('.module-price').innerHTML = elementsToTranslate[language].module1Price + '<span>/mês</span>';
+        const module1Features = modules[0].querySelector('.module-features');
+        module1Features.innerHTML = '';
+        elementsToTranslate[language].module1Features.forEach(feature => {
+          module1Features.innerHTML += `<li><i class="fas fa-check"></i>${feature}</li>`;
+        });
+
+        modules[1].querySelector('h3').textContent = elementsToTranslate[language].module2Title;
+      //  modules[1].querySelector('.module-price').innerHTML = elementsToTranslate[language].module2Price + '<span>/mês</span>';
+        const module2Features = modules[1].querySelector('.module-features');
+        module2Features.innerHTML = '';
+        elementsToTranslate[language].module2Features.forEach(feature => {
+          module2Features.innerHTML += `<li><i class="fas fa-check"></i>${feature}</li>`;
+        });
+
+        modules[2].querySelector('h3').textContent = elementsToTranslate[language].module3Title;
+      //  modules[2].querySelector('.module-price').innerHTML = elementsToTranslate[language].module3Price + '<span>/mês</span>';
+        const module3Features = modules[2].querySelector('.module-features');
+        module3Features.innerHTML = '';
+        elementsToTranslate[language].module3Features.forEach(feature => {
+          module3Features.innerHTML += `<li><i class="fas fa-check"></i>${feature}</li>`;
+        });
+
+        modules[3].querySelector('h3').textContent = elementsToTranslate[language].module4Title;
+      //  modules[3].querySelector('.module-price').innerHTML = elementsToTranslate[language].module4Price + '<span>/mês</span>';
+        const module4Features = modules[3].querySelector('.module-features');
+        module4Features.innerHTML = '';
+        elementsToTranslate[language].module4Features.forEach(feature => {
+          module4Features.innerHTML += `<li><i class="fas fa-check"></i>${feature}</li>`;
+        });
+
+        document.querySelector('.footer-section p').textContent = elementsToTranslate[language].footerText;
+      }
+
+      languageToggle.addEventListener('change', function() {
+        const selectedLanguage = this.value;
+        translatePage(selectedLanguage);
+      });
+    });
+  </script>
+</head>
+<body>
+  <header class="landing-header">
+    <nav class="navbar">
+      <div class="logo">WALAKA</div>
+      <ul class="nav-links">
+        <li><a href="#features">Soluções</a></li>
+        <li><a href="#pricing">Preços</a></li>
+        <li><a href="#resources">Recursos</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <div class="input-group">
+          <i class="fas fa-search search-icon" tabindex="0"></i>
+          <input type="text" placeholder="Buscar..." class="search-bar" aria-label="Search">
+        </div>
+        <a href="dashboard.html"><button class="btn btn-trial">Iniciar Teste Gratuito</button></a>
+        <a href="login.html"><button class="btn btn-login">Entrar</button></a>
+        <select class="language-toggle" aria-label="Select Language">
+          <option value="pt">PT</option>
+          <option value="en">EN</option>
+        </select>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Impulsione o Crescimento da Sua Empresa</h1>
+      <p>Plataforma unificada de gestão empresarial projectada para empresas modernas. Optimize operações, gerencie finanças e melhore relacionamentos com clientes.</p>
+      <div class="cta-buttons">
+        <button class="btn btn-trial">Iniciar Teste Gratuito</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="modules-section">
+    <div class="modules-container">
+      <div class="module">
+        <i class="fas fa-file-invoice module-icon"></i>
+        <h3>Facturação Inteligente</h3>
+        <div class="module-price">MZN 149<span>/mês</span></div>
+        <ul class="module-features">
+          <li><i class="fas fa-check"></i>Facturação automática</li>
+          <li><i class="fas fa-check"></i>Facturas recorrentes</li>
+          <li><i class="fas fa-check"></i>Suporte multi-moeda</li>
+          <li><i class="fas fa-check"></i>Rastreamento de pagamentos</li>
+        </ul>
+        <button class="btn btn-trial">Começar</button>
+      </div>
+
+      <div class="module">
+        <i class="fas fa-chart-line module-icon"></i>
+        <h3>Suite Comercial</h3>
+        <div class="module-price"><span></span></div>
+        <ul class="module-features">
+          <li><i class="fas fa-check"></i>Em Desenvolvimento</li>
+          <!--
+          <li><i class="fas fa-check"></i></li>
+          <li><i class="fas fa-check"></i></li>
+          <li><i class="fas fa-check"></i></li>
+        </ul>
+        <button class="btn btn-trial">Começar</button>
+            -->
+      </div>
+
+      <div class="module">
+        <i class="fas fa-calculator module-icon"></i>
+        <h3>Contabilidade Pro</h3>
+        <div class="module-price"><span></span></div>
+        <ul class="module-features">
+          <li><i class="fas fa-check"></i>Em Desenvolvimento</li>
+            <!--
+          <li><i class="fas fa-check"></i></li>
+          <li><i class="fas fa-check"></i></li>
+          <li><i class="fas fa-check"></i></li>
+        </ul>
+       <button class="btn btn-trial">Começar</button>
+            -->
+      </div>
+
+      <div class="module">
+        <i class="fas fa-coins module-icon"></i>
+        <h3>Suite Financeira</h3>
+        <div class="module-price"><span></span></div>
+        <ul class="module-features">
+          <li><i class="fas fa-check"></i>Em Desenvolvimento</li>
+          <!--
+          <li><i class="fas fa-check"></i></li>
+          <li><i class="fas fa-check"></i></li>
+          <li><i class="fas fa-check"></i></li>
+        </ul>
+        <button class="btn btn-trial">Começar</button>
+            -->
+      </div>
+    </div>
+  </section>
+
+  <section class="trust-section">
+    
+    <div class="trust-logos">
+      <img src="placeholder-logo1.svg" alt="Cliente 1">
+      <img src="placeholder-logo2.svg" alt="Cliente 2">
+      <img src="placeholder-logo3.svg" alt="Cliente 3">
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>WALAKA</h4>
+        <p>Soluções empresariais para os desafios do amanhã.</p>
+      </div>
+      
+    </div>
+  </footer>
+</body>
+</html>

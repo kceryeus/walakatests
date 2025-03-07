@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Module</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('financial-background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+
+    header, footer {
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      position: fixed;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    header {
+      top: 0;
+    }
+
+    footer {
+      bottom: 0;
+    }
+
+    header nav a, footer nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
+    header nav a:hover, footer nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      padding: 120px 20px 80px; /* Adjust for fixed header/footer */
+      text-align: center;
+    }
+
+    .module-details {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .module-details h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .module-details p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .module-details button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #444;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .module-details button:hover {
+      background-color: #333;
+    }
+
+    #payment-options {
+      display: none;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+
+    #payment-options h2 {
+      margin-bottom: 20px;
+    }
+
+    #payment-options button {
+      margin: 5px;
+    }
+
+    #auth-message {
+      display: none;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Module Details -->
+    <div class="module-details">
+      <h1>Financial Module</h1>
+      <p>Ensure your business stays profitable and sustainable with our Financial module. Analyze cash flow, profit & loss, and projections for growth.</p>
+      <p>Key features:</p>
+      <ul style="text-align: left; margin: 0 auto; max-width: 400px;">
+        <li>Financial forecasting tools</li>
+        <li>Real-time profitability analysis</li>
+        <li>Investment and risk analysis</li>
+        <li>Customizable financial reports</li>
+      </ul>
+      <button onclick="simulateSignIn()">Sign In</button>
+      <button onclick="showPaymentOptions()">Subscribe</button>
+    </div>
+
+    <!-- Payment Options -->
+    <div id="payment-options">
+      <h2>Select a Payment Method</h2>
+      <button onclick="collectPhoneNumber('M-Pesa')">M-Pesa</button>
+      <button onclick="collectPhoneNumber('E-Mola')">E-Mola</button>
+      <button onclick="collectPhoneNumber('M-Kesh')">M-Kesh</button>
+      <button onclick="simulatePayment('PayPal')">PayPal</button>
+    </div>
+
+    <!-- Authentication Message -->
+    <div id="auth-message">Waiting for authentication code...</div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <p>&copy; 2025 PROTOTYPE. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Show payment options
+    function showPaymentOptions() {
+      document.getElementById('payment-options').style.display = 'block';
+    }
+
+    // Simulate sign-in
+    function simulateSignIn() {
+      alert("Sign-in successful!");
+      window.location.href = "home.html"; // Redirect to home page
+    }
+
+    // Collect phone number and validate it
+    function collectPhoneNumber(method) {
+      const phoneNumber = prompt(`Enter your phone number for ${method}:`);
+
+      if (!phoneNumber || phoneNumber.length !== 9 || isNaN(phoneNumber)) {
+        alert("Invalid phone number. Please enter a 9-digit number.");
+        return;
+      }
+
+      const prefix = phoneNumber.substring(0, 2);
+
+      if (method === "M-Pesa" && (prefix === "82" || prefix === "83")) {
+        alert("That prefix is for M-Kesh.");
+        return;
+      } else if (method === "M-Pesa" && (prefix === "86" || prefix === "87")) {
+        alert("That prefix is for E-Mola.");
+        return;
+      } else if (method === "E-Mola" && (prefix === "84" || prefix === "85")) {
+        alert("That prefix is for M-Pesa.");
+        return;
+      } else if (method === "E-Mola" && (prefix === "82" || prefix === "83")) {
+        alert("That prefix is for M-Kesh.");
+        return;
+      } else if (method === "M-Kesh" && (prefix === "84" || prefix === "85")) {
+        alert("That prefix is for M-Pesa.");
+        return;
+      } else if (method === "M-Kesh" && (prefix === "86" || prefix === "87")) {
+        alert("That prefix is for E-Mola.");
+        return;
+      }
+
+      // Prompt for PIN
+      const pin = prompt("Enter your PIN:");
+
+      if (!pin || pin.length !== 4 || isNaN(pin)) {
+        alert("Invalid PIN. Please enter a 4-digit PIN.");
+        return;
+      }
+
+      // Show authentication message and wait for 4 seconds
+      document.getElementById('auth-message').style.display = 'block';
+      
+      setTimeout(() => {
+        alert(`Payment successful using ${method}!`);
+        window.location.href = "home.html"; // Redirect to home page
+      }, 4000); // Wait 4 seconds before redirect
+    }
+
+    // Simulate payment process for PayPal
+    function simulatePayment(method) {
+      alert(`Payment successful using ${method}!`);
+      window.location.href = "home.html"; // Redirect to home page
+    }
+  </script>
+</body>
+</html>

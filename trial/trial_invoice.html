@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Factura</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    // Initialize Supabase client
+    const supabaseUrl = https://zkqjmozftqmyaycpmlxn.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk'
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+  </script>
+  <style>
+  
+  body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--background-color);
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    body.loaded {
+      opacity: 1;
+    }
+
+       /* Sidebar */
+    .sidebar {
+      background: linear-gradient(195deg, #007ec7, #02204e);
+      color: white;
+      padding: 2rem 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: fit-content;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      transition: transform var(--transition-speed) ease;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--card-radius);
+      transition: all var(--transition-speed) ease;
+    }
+
+    .logo:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--card-radius);
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+
+    .nav-item i {
+      width: 24px;
+      text-align: center;
+    }
+
+    .container {
+      margin-left: 280px;
+      padding: 20px;
+      display: block;
+      width: 800px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #1e293b;
+    }
+
+    .btn {
+      background-color: #007ec7; /* Corporate blue */
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #005f99; /* Darker shade of corporate blue */
+    }
+
+    .content {
+      display: flex;
+      gap: 20px;
+      width: 800px;
+    }
+
+    .section {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      flex: 1;
+    }
+
+    .section h2 {
+      margin-bottom: 15px;
+      font-size: 18px;
+      color: #4b5563;
+      border-bottom: 2px solid #007ec7; /* Corporate blue */
+      padding-bottom: 5px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 2px;
+      font-weight: 600;
+    }
+
+    .form-group input, .form-group select {
+      padding: 5px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .table-section {
+      margin-top: 20px;
+    }
+
+    table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px; /* Increased margin */
+            border-radius: 10px; /* Rounded table corners */
+            overflow: hidden; /* Ensure rounded corners are applied */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Table shadow */
+        }
+
+        table th, table td {
+            border: none; /* Remove default borders */
+            padding: 15px; /* Increased padding */
+            text-align: left;
+            border-bottom: 1px solid #ddd; /* Kept bottom border for table rows */
+        }
+
+        table th {
+            background-color: #007ec7; /* Corporate blue for header */
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase; /* Uppercase headers */
+            letter-spacing: 0.05em; /* Slight letter spacing */
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9; /* Even row background */
+        }
+
+        table tbody tr:hover {
+            background-color: #f2f2f2; /* Hover effect on rows */
+        }
+
+        .totals {
+            text-align: right;
+            margin-top: 25px; /* Increased margin */
+        }
+
+        .totals p {
+            margin: 8px 0; /* Increased margin */
+            font-size: 18px; /* Larger totals font */
+        }
+
+        .totals p strong {
+            font-size: 20px; /* Even larger for strong text */
+        }
+
+        .invoice-list {
+            margin-top: 25px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .invoice-list h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #4b5563;
+            border-bottom: 3px solid #007ec7;
+            padding-bottom: 8px;
+        }
+
+        .invoice-list table {
+            width: 100%;
+        }
+
+        .invoice-list th, .invoice-list td {
+            text-align: center;
+        }
+
+        .invoice-list .action-btn {
+            margin: 0 5px;
+        }
+
+        .side-by-side-container {
+            display: flex;
+            gap: 25px; /* Increased gap */
+            width: 800px; /* Kept original fixed width */
+            margin-top: 30px; /* Increased margin */
+        }
+
+        .side-by-side-container .section {
+            flex: 1;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background-color: #28a745; /* Green for active */
+            color: white;
+        }
+
+        .status-badge.inactive {
+            background-color: #dc3545; /* Red for inactive */
+            color: white;
+        }
+
+        .status-badge.paid {
+            background-color: #007bff; /* Blue for paid */
+            color: white;
+        }
+
+        .status-badge.pending {
+            background-color: #ffc107; /* Yellow for pending */
+            color: #333; /* Dark text for contrast on yellow */
+        }
+
+        /* Pagination buttons */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .btn-page {
+            background-color: #f8f9fa; /* Light background for pagination buttons */
+            color: #495057; /* Darker text color */
+            border: 1px solid #ced4da; /* Light border */
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .btn-page:hover, .btn-page.active {
+            background-color: #007ec7; /* Corporate blue on hover/active */
+            color: white;
+            border-color: #007ec7;
+        }
+
+        .btn-page:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column; /* Stack sidebar and content on smaller screens */
+            }
+
+            .side-menu {
+                position: static; /* Sidebar is part of document flow */
+                width: 100%; /* Full width sidebar */
+                height: auto; /* Adjust height based on content */
+                flex-direction: row; /* Horizontal layout for menu */
+                overflow-y: auto; /* Allow vertical scrolling if needed */
+                padding: 5px 0; /* Reduce vertical padding */
+                align-items: flex-start; /* Align items to start in row direction */
+                margin-bottom: 20px; /* Margin below sidebar */
+            }
+
+            .side-menu:hover {
+                width: 100%; /* Do not expand width on hover for full width sidebar */
+            }
+
+            .side-menu h2 {
+                display: none; /* Hide title on smaller screens */
+            }
+
+            .menu {
+                display: flex; /* Menu items in a row */
+                justify-content: space-around; /* Distribute items evenly */
+                width: 100%;
+            }
+
+            .menu-item {
+                flex-direction: column; /* Icon above text */
+                text-align: center; /* Center text below icon */
+                padding: 10px 5px; /* Adjust padding for smaller items */
+                margin-bottom: 0; /* Remove bottom margin */
+            }
+
+            .menu-item span {
+                opacity: 1; /* Always show text on small screens */
+                visibility: visible;
+                font-size: 0.9em; /* Smaller font size for menu text */
+            }
+
+            .menu-item i {
+                margin-right: 0; /* Remove right margin for icon */
+                margin-bottom: 5px; /* Margin below icon */
+            }
+
+            .container {
+                margin-left: 0; /* Reset margin for full width container */
+                width: 100%; /* Full width container */
+                max-width: none; /* Remove max-width to allow full width on small screens */
+            }
+
+            .side-menu:hover + .container {
+                margin-left: 0; /* Reset margin on hover as well */
+                width: 100%; /* Full width container on hover */
+            }
+
+            .content {
+                flex-direction: column; /* Stack sections vertically on smaller screens */
+                width: 100%; /* Make content full width on small screens */
+                max-width: none; /* Remove max-width for full width content */
+            }
+
+            .side-by-side-container {
+                flex-direction: column; /* Stack side-by-side sections vertically */
+                width: 100%; /* Make side-by-side container full width */
+                max-width: none; /* Remove max-width */
+            }
+
+            .table-section table, .invoice-list table {
+                display: block;
+                overflow-x: auto; /* Enable horizontal scroll for tables if content is too wide */
+                white-space: nowrap; /* Prevent wrapping of table cells */
+            }
+        }
+
+        /* Utility class to remove item row */
+        .remove-item {
+            background: none;
+            color: red;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 0; /* Reset padding */
+            line-height: 1; /* Adjust line height to align 'x' */
+            display: inline-block; /* Ensure proper inline display */
+        }
+
+        .remove-item:hover {
+            color: darkred;
+        }
+
+        /* Action button icons */
+        .invoice-actions .btn-icon {
+            width: 1em; /* Adjust icon size as needed */
+            height: 1em;
+            margin-right: 5px;
+            vertical-align: middle; /* Align icon with text */
+             filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg); /* keep original icon color */
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <i class="fas fa-chart-line"></i>
+        WALAKA
+      </div>
+      <div class="nav-menu">
+        <a href="#" class="nav-item active">
+          <i class="fas fa-home"></i>
+          Dashboard
+        </a>
+        <a href="invoice.html" class="nav-item">
+          <i class="fas fa-file-invoice"></i>
+          Faturas
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fas fa-wallet"></i>
+          Contas
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fas fa-chart-pie"></i>
+          Relatórios
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fas fa-cog"></i>
+          Configurações
+        </a>
+        <a href="#" class="nav-item" onclick="handleSignOut()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Sign Out</span>
+        </a>
+      </div>
+    </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1>Factura</h1>
+      <button id="generate-pdf" class="btn">Imprimir/Descarregar</button>
+    </div>
+
+
+    
+    <div class="invoice-list">
+      <h2>Facturas Existentes</h2>
+      <div class="invoice-actions">
+        <button class="btn action-btn">
+          Visualizar
+        </button>
+        <button class="btn action-btn">
+          Editar
+        </button>
+        <button class="btn action-btn">
+          Anular
+        </button>
+        <button class="btn action-btn">
+          Enviar
+        </button>
+        <button class="btn action-btn">
+          Gravar
+        </button>
+      </div>
+      
+      <div class="table-container">
+        <table class="invoice-table">
+          <thead>
+            <tr>
+              <th class="checkbox-column">
+                <input type="checkbox" id="select-all" class="custom-checkbox">
+                <label for="select-all"></label>
+              </th>
+              <th>ID da Factura</th>
+              <th>Cliente</th>
+              <th>Data</th>
+              <th>Valor</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="checkbox-column">
+                <input type="checkbox" id="invoice-1" class="custom-checkbox">
+                <label for="invoice-1"></label>
+              </td>
+              <td>FT-2025/001</td>
+              <td>Empresa ABC</td>
+              <td>11/02/2025</td>
+              <td>15.000,00 MT</td>
+              <td><span class="status-badge active">Activo</span></td>
+            </tr>
+            <tr>
+              <td class="checkbox-column">
+                <input type="checkbox" id="invoice-2" class="custom-checkbox">
+                <label for="invoice-2"></label>
+              </td>
+              <td>FT-2025/002</td>
+              <td>Tech Solutions</td>
+              <td>10/02/2025</td>
+              <td>8.500,00 MT</td>
+              <td><span class="status-badge inactive">Inactivo</span></td>
+            </tr>
+            <tr>
+              <td class="checkbox-column">
+                <input type="checkbox" id="invoice-3" class="custom-checkbox">
+                <label for="invoice-3"></label>
+              </td>
+              <td>FT-2025/003</td>
+              <td>Global Trade</td>
+              <td>09/02/2025</td>
+              <td>22.750,00 MT</td>
+              <td><span class="status-badge paid">Pago</span></td>
+            </tr>
+            <tr>
+              <td class="checkbox-column">
+                <input type="checkbox" id="invoice-4" class="custom-checkbox">
+                <label for="invoice-4"></label>
+              </td>
+              <td>FT-2025/004</td>
+              <td>Local Services</td>
+              <td>08/02/2025</td>
+              <td>12.300,00 MT</td>
+              <td><span class="status-badge pending">Pendente</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="pagination">
+        <button class="btn-page" disabled>&lt;</button>
+        <button class="btn-page active">1</button>
+        <button class="btn-page">2</button>
+        <button class="btn-page">3</button>
+        <button class="btn-page">&gt;</button>
+      </div>
+    </div>
+
+    <div class="side-by-side-container">
+      <div class="section">
+        <h2>Informações do Cliente</h2>
+        <div class="form-group">
+          <label for="client-name">Nome do Cliente:</label>
+          <input type="text" id="client-name" placeholder="Ex: Empresa XYZ">
+        </div>
+        <div class="form-group">
+          <label for="client-address">Endereço:</label>
+          <input type="text" id="client-address" placeholder="Ex: Bairro Central">
+        </div>
+        <div class="form-group">
+          <label for="client-NUIT">NUIT:</label>
+          <input type="text" id="client-NUIT" placeholder="Ex: 400123456">
+        </div>
+        <div class="form-group">
+          <label for="client-email">Email:</label>
+          <input type="email" id="client-email" placeholder="cliente@email.com">
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Detalhes da Factura</h2>
+        <div class="form-group">
+          <label for="issue-date">Data de Emissão:</label>
+          <input type="date" id="issue-date">
+        </div>
+        <div class="form-group">
+          <label for="due-date">Data de Vencimento:</label>
+          <input type="date" id="due-date">
+        </div>
+        <div class="form-group">
+          <label for="payment-terms">Condições de Pagamento:</label>
+          <input type="text" id="payment-terms" placeholder="Ex: Pagamento em 30 dias">
+        </div>
+        <div class="form-group">
+          <label for="invoice-description">Descrição da Factura:</label>
+          <input type="text" id="invoice-description" placeholder="Descrição do serviço prestado">
+        </div>
+      </div>
+    </div>
+
+    <div class="table-section">
+      <h2>Itens da Factura</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Descrição</th>
+            <th>Quantidade</th>
+            <th>Preço Unitário</th>
+            <th>IVA</th>
+            <th>Taxa IVA</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="items-body">
+          <tr>
+            <td><button class="remove-item">x</button></td>
+            <td><input type="text" placeholder="Descrição"></td>
+            <td><input type="number" value="1" min="1" class="item-quantity"></td>
+            <td><input type="number" value="0" step="0.01" class="item-price"></td>
+            <td>
+              <select class="vat-select">
+                <option value="16" selected>16%</option>
+                <option value="5">5%</option>
+                <option value="0">Isento</option>
+                <option value="custom">Outro</option>
+              </select>
+              <input type="number" step="0.01" class="custom-vat" style="display: none;" placeholder="%" />
+            </td>
+            <td class="item-vat-rate">0.00</td>
+            <td class="item-total">0.00</td>
+          </tr>
+        </tbody>
+      </table>
+      <button id="add-item" class="btn">Adicionar Item</button>
+    </div>
+
+    <div class="totals">
+      <p><strong>Subtotal:</strong> <span id="subtotal">0.00</span> MZN</p>
+      <p><strong>IVA (16%):</strong> <span id="vat">0.00</span> MZN</p>
+      <p><strong>Total Geral:</strong> <span id="total">0.00</span> MZN</p>
+    </div>
+
+  </div>
+
+  <script>
+    let invoiceCounter = 1; // Initialize invoice number counter
+
+    function calculateTotals() {
+      let subtotal = 0;
+      let totalVAT = 0;
+
+      const rows = document.querySelectorAll('#items-body tr');
+
+      rows.forEach(row => {
+        const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+        const price = parseFloat(row.querySelector('.item-price').value) || 0;
+
+        const vatSelect = row.querySelector('.vat-select');
+        let vatRate = parseFloat(vatSelect.value) || 0;
+        const customVatInput = row.querySelector('.custom-vat');
+        if (vatSelect.value === "custom" && customVatInput.value) {
+          vatRate = parseFloat(customVatInput.value) || 0;
+        }
+
+        const rowSubtotal = quantity * price;
+        const rowVAT = rowSubtotal * (vatRate / 100);
+        const rowTotal = rowSubtotal + rowVAT;
+
+        row.querySelector('.item-total').textContent = rowTotal.toFixed(2);
+        row.querySelector('.item-vat-rate').textContent = vatRate.toFixed(2) + "%";
+
+        subtotal += rowSubtotal;
+        totalVAT += rowVAT;
+      });
+
+      const grandTotal = subtotal + totalVAT;
+
+      document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+      document.getElementById('vat').textContent = totalVAT.toFixed(2);
+      document.getElementById('total').textContent = grandTotal.toFixed(2);
+    }
+
+    function generatePDF() {
+      const clientName = document.getElementById("client-name").value || "N/A";
+      const clientAddress = document.getElementById("client-address").value || "N/A";
+      const issueDate = document.getElementById("issue-date").value || "N/A";
+      const clientNUIT = document.getElementById("client-NUIT").value || "N/A";
+      const clientEmail = document.getElementById("client-email").value || "N/A";
+      const paymentTerms = document.getElementById("payment-terms").value || "N/A";
+      const invoiceDescription = document.getElementById("invoice-description").value || "N/A";
+      const invoiceNumber = String(invoiceCounter).padStart(4, '0'); // Format invoice number
+
+      invoiceCounter++; // Increment invoice number for next use
+
+      const items = [...document.querySelectorAll("#items-body tr")].map((row, index) => ({
+        description: row.querySelector("td:nth-child(2) input").value || "N/A",
+        quantity: row.querySelector(".item-quantity").value || "0",
+        price: row.querySelector(".item-price").value || "0",
+        vatRate: row.querySelector(".item-vat-rate").textContent || "0%",
+        total: row.querySelector(".item-total").textContent || "0.00",
+        index: index + 1 // Add index for SL
+      }));
+
+      const subtotal = document.getElementById("subtotal").textContent;
+      const vat = document.getElementById("vat").textContent;
+      const total = document.getElementById("total").textContent;
+
+      // Template for the PDF content
+      const pdfContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Invoice</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    background-color: #f9f9f9;
+                    color: #333;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .invoice-container {
+                    max-width: 800px;
+                    margin: 0 auto;
+                    background: #fff;
+                    padding: 20px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    border-radius: 8px;
+                }
+                .header {
+                    text-align: center;
+                    padding-bottom: 20px;
+                    border-bottom: 2px solid #007ec7; /* Corporate blue */
+                }
+                .header h1 {
+                    font-size: 28px;
+                    color: #007ec7; /* Corporate blue */
+                    margin: 0;
+                }
+                .invoice-info {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 20px;
+                }
+                .invoice-info div {
+                    flex: 1;
+                }
+                .invoice-info h2 {
+                    font-size: 18px;
+                    color: #555;
+                    margin: 0 0 10px 0;
+                }
+                .invoice-info p {
+                    margin: 0;
+                    color: #777;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+                table th, table td {
+                    padding: 12px;
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                }
+                table th {
+                    background-color: #007ec7; /* Corporate blue */
+                    color: white;
+                }
+                table tr:nth-child(even) {
+                    background-color: #f9f9f9;
+                }
+                .footer {
+                    margin-top: 20px;
+                    padding-top: 20px;
+                    border-top: 2px solid #007ec7; /* Corporate blue */
+                }
+                .footer p {
+                    margin: 5px 0;
+                    color: #555;
+                }
+                .footer ul {
+                    margin: 10px 0;
+                    padding-left: 20px;
+                }
+                .footer ul li {
+                    list-style-type: none;
+                    color: #777;
+                }
+                .total {
+                    text-align: right;
+                    margin-top: 20px;
+                    font-size: 18px;
+                    color: #007ec7; /* Corporate blue */
+                }
+                .total p {
+                    margin: 5px 0;
+                }
+                .authorised-sign {
+                    margin-top: 20px;
+                    text-align: right;
+                    font-style: italic;
+                    color: #777;
+                }
+                .description {
+                    text-align: right;
+                    margin-top: 20px;
+                    color: #555;
+                }
+            </style>
+        </head>
+        <body>
+
+            <div class="invoice-container">
+                <div class="header">
+                    <h1>INVOICE</h1>
+                </div>
+
+                <div class="invoice-info">
+                    <div>
+                        <h2>Invoice to:</h2>
+                        <p>${clientName}</p>
+                        <p>${clientAddress}</p>
+                        <p>${clientEmail}</p>
+                        <p>${clientNUIT}</p>
+                    </div>
+                    <div>
+                        <h2>Invoice #</h2>
+                        <p>${invoiceNumber}</p>
+                        <p><strong>Date:</strong> ${issueDate}</p>
+                        <p><strong>Payment Terms:</strong> ${paymentTerms}</p>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SL.</th>
+                            <th>Item Description</th>
+                            <th>Price</th>
+                            <th>Qty.</th>
+                            <th>VAT Rate</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${items.map(item => `
+                            <tr>
+                                <td>${item.index}</td>
+                                <td>${item.description}</td>
+                                <td>${item.price}</td>
+                                <td>${item.quantity}</td>
+                                <td>${item.vatRate}</td>
+                                <td>${item.total}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <div class="total">
+                    <p><strong>Sub Total:</strong> ${subtotal} MZN</p>
+                    <p><strong>Tax:</strong> ${vat} MZN</p>
+                    <p><strong>Total:</strong> ${total} MZN</p>
+                </div>
+
+                <div class="authorised-sign">
+                    <p>Assinatura autorizada</p>
+                </div>
+                <div class="description">
+                    <p><strong>Descrição:</strong> ${invoiceDescription}</p>
+                </div>
+            </div>
+
+        </body>
+        </html>`;
+
+      const options = {
+        margin: 10,
+        filename: 'invoice.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(options).from(pdfContent).save();
+    }
+
+    document.addEventListener("change", (event) => {
+      if (event.target.classList.contains("vat-select")) {
+        const vatSelect = event.target;
+        const customVatInput = vatSelect.nextElementSibling;
+
+        if (vatSelect.value === "custom") {
+          customVatInput.style.display = "inline-block";
+          customVatInput.focus();
+        } else {
+          customVatInput.style.display = "none";
+          customVatInput.value = "";
+        }
+        calculateTotals();
+      }
+    });
+
+    document.querySelectorAll('.item-quantity, .item-price').forEach(input => {
+      input.addEventListener('input', calculateTotals);
+    });
+
+    document.getElementById('add-item').addEventListener('click', () => {
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td><button class="remove-item">X</button></td>
+        <td><input type="text" placeholder="Descrição"></td>
+        <td><input type="number" value="1" min="1" class="item-quantity"></td>
+        <td><input type="number" value="0" step="0.01" class="item-price"></td>
+        <td>
+          <select class="vat-select">
+            <option value="16" selected>16%</option>
+            <option value="5">5%</option>
+            <option value="0">Isento</option>
+            <option value="custom">Outro</option>
+          </select>
+          <input type="number" step="0.01" class="custom-vat" style="display: none;" placeholder="%" />
+        </td>
+        <td class="item-vat-rate">0.00</td>
+        <td class="item-total">0.00</td>
+      `;
+      document.getElementById('items-body').appendChild(newRow);
+
+      newRow.querySelector('.item-quantity').addEventListener('input', calculateTotals);
+      newRow.querySelector('.item-price').addEventListener('input', calculateTotals);
+      newRow.querySelector('.vat-select').addEventListener('change', calculateTotals);
+      newRow.querySelector('.remove-item').addEventListener('click', () => {
+        newRow.remove();
+        calculateTotals();
+      });
+    });
+
+    document.getElementById('generate-pdf').addEventListener('click', generatePDF);
+
+    async function handleSignOut() {
+      try {
+        const { error } = await supabase.auth.signOut()
+        if (error) {
+          throw error
+        }
+        // Clear any local storage items if needed
+        localStorage.removeItem('user')
+        localStorage.removeItem('session')
+        
+        // Redirect to login page
+        window.location.href = '/login.html'
+      } catch (error) {
+        console.error('Error signing out:', error.message)
+        alert('Error signing out. Please try again.')
+      }
+    }
+
+    // Check authentication status when page loads
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      if (!session) {
+        window.location.href = '/login.html'
+      }
+    })
+
+    // Add click event listener to the sign-out button
+    document.getElementById('signout-btn').addEventListener('click', function(e) {
+      e.preventDefault()
+      handleSignOut()
+    })
+  </script>
+<script>
+// Add any necessary JavaScript code here if needed
+</script>
+
+  <script src="auth.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/dist/umd/supabase.min.js"></script>
+</body>
+</html>
