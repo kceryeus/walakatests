@@ -27,6 +27,7 @@
       color: #1e293b;
       min-height: 100vh;
       overflow-x: hidden;
+      overflow-y: auto; /* Ensure scrolling works properly */
       opacity: 1;
       transition: opacity 0.5s ease-in-out;
     }
@@ -42,12 +43,12 @@
       padding: 2rem 1.5rem;
       position: sticky;
       top: 0;
-      height: 100vh;
       width: fit-content;
       display: flex;
       flex-direction: column;
       gap: 2rem;
       transition: transform var(--transition-speed) ease;
+      height: 100%; /* Match the sidebar height */
     }
 
     .logo {
@@ -94,9 +95,10 @@
     }
 
     .container {
-      display: grid;
-      grid-template-columns: 1fr;
-      min-height: 100vh;
+      display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 100vh; /* Optional, if using full height */
     }
 
     .header {
@@ -125,8 +127,10 @@
     }
 
     .content {
-      padding: 2rem;
-      margin-top: 2rem;
+      max-width: 100%; /* Ensure it doesn't stretch unnecessarily */
+  padding: 20px; /* Adjust padding */
+  margin: 0 auto; /* Center if needed */
+  height: auto; /* Prevent forced height */
     }
 
     .section {
@@ -455,7 +459,7 @@
           </a>
         </div>
       </nav>
-      
+
     <div class="header">
       <h1>Factura</h1>
       <button id="generate-pdf" class="btn">Imprimir/Descarregar</button>
