@@ -419,41 +419,43 @@
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-    <nav class="sidebar">
-      <div class="logo">
-        <i class="fas fa-chart-line"></i>
-        WALAKA
-      </div>
-      <div class="nav-menu">
-        <a href="#" class="nav-item">
-          <i class="fas fa-home"></i>
-          Dashboard
-        </a>
-        <a href="invoice.html" class="nav-item active">
-          <i class="fas fa-file-invoice"></i>
-          Faturas
-        </a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-wallet"></i>
-          Contas
-        </a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-chart-pie"></i>
-          Relatórios
-        </a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-cog"></i>
-          Configurações
-        </a>
-        <a href="#" class="nav-item" onclick="handleSignOut()">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Sign Out</span>
-        </a>
-      </div>
-    </nav>
+
 
   <div class="container">
+      <!-- Sidebar -->
+      <nav class="sidebar">
+        <div class="logo">
+          <i class="fas fa-chart-line"></i>
+          WALAKA
+        </div>
+        <div class="nav-menu">
+          <a href="#" class="nav-item">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="invoice.html" class="nav-item active">
+            <i class="fas fa-file-invoice"></i>
+            Faturas
+          </a>
+          <a href="#" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            Contas
+          </a>
+          <a href="#" class="nav-item">
+            <i class="fas fa-chart-pie"></i>
+            Relatórios
+          </a>
+          <a href="#" class="nav-item">
+            <i class="fas fa-cog"></i>
+            Configurações
+          </a>
+          <a href="#" class="nav-item" onclick="handleSignOut()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sign Out</span>
+          </a>
+        </div>
+      </nav>
+      
     <div class="header">
       <h1>Factura</h1>
       <button id="generate-pdf" class="btn">Imprimir/Descarregar</button>
