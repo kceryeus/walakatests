@@ -140,7 +140,7 @@
         }
 
         .switch-form a:hover {
-            color: var(--secondary-color);
+            color: var (--secondary-color);
             text-decoration: underline;
         }
 
@@ -176,7 +176,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="profile-pic"></div>
+        <div class="profile-pic" id="profilePic"></div>
         
         <div id="loginForm" class="form-container active">
             <h2>Welcome Back</h2>
@@ -228,7 +228,7 @@
     <script>
         // Initialize Supabase client first
         const supabaseUrl = 'https://zqnthduqpzriydgbdojy.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbnRoZHVxcHpyaXlkZ2Jkb2p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4OTkzOTcsImV4cCI6MjA1NzQ3NTM5N30.fZqsPqkbJ4m-Lp7BRTAOuxU5_6MXj8QJERUTreshKIU';
+        const supabaseKey = 'your-supabase-key';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         async function toggleForms() {
@@ -257,6 +257,7 @@
                 if (error) throw error;
 
                 console.log('Logged in:', data);
+                await fetchUserProfile(data.user.id);
                 window.location.href = 'dashboard.html';
             } catch (error) {
                 console.error('Error logging in:', error.message);
@@ -305,9 +306,32 @@
             }
         }
 
+        async function fetchUserProfile(userId) {
+            try {
+                const { data: profileData, error } = await supabaseClient
+                    .from('users')
+                    .select('logo')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) {
+                    console.error('Error fetching profile:', error.message);
+                    return;
+                }
+
+                const profilePic = document.getElementById('profilePic');
+                if (profilePic && profileData?.logo) {
+                    profilePic.style.backgroundImage = `url(${profileData.logo})`;
+                }
+            } catch (error) {
+                console.error('Unexpected error:', error);
+            }
+        }
+
         async function checkUser() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (user) {
+                await fetchUserProfile(user.id);
                 window.location.href = 'dashboard.html';
             }
         }
