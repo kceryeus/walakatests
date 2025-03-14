@@ -751,6 +751,29 @@ productInput.addEventListener("input", async (event) => {
       ${item.description}
     </div>
   `).join('');
+
+  // Add event listener for keyboard navigation
+  const suggestionItems = document.querySelectorAll(".suggestion-item");
+  suggestionItems.forEach((item, index) => {
+    item.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        selectProduct(item.textContent);
+      } else if (e.key === "ArrowDown" && index < suggestionItems.length - 1) {
+        suggestionItems[index + 1].focus();
+      } else if (e.key === "ArrowUp" && index > 0) {
+        suggestionItems[index - 1].focus();
+      }
+    });
+  });
+});
+
+productInput.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown") {
+    const firstSuggestion = document.querySelector(".suggestion-item");
+    if (firstSuggestion) {
+      firstSuggestion.focus();
+    }
+  }
 });
 
 function selectProduct(description) {
