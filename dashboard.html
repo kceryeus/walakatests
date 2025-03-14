@@ -497,7 +497,7 @@
         if (user) {
           // Ajuste o nome da tabela e coluna conforme seu banco
           const { data: profileData, error: profileError } = await supabase
-            .from('utilizador')       // Tabela
+            .from('users')       // Tabela
             .select('username')  // Coluna
             .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
             ;
