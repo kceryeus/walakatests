@@ -722,46 +722,53 @@
 
     // Assuming you’ve already initialized Supabase
 const productInput = document.getElementById("product-search");
-const suggestionsBox = document.getElementById("suggestions");
+const suggestionsBox = document.createElement("div");
+suggestionsBox.id = "suggestions";
+suggestionsBox.style.position = "absolute";
+suggestionsBox.style.backgroundColor = "white";
+suggestionsBox.style.border = "1px solid #ddd";
+suggestionsBox.style.width = "100%";
+suggestionsBox.style.zIndex = "1000";
+productInput.parentNode.appendChild(suggestionsBox);
 
 productInput.addEventListener("input", async (event) => {
-    const query = event.target.value;
-    if (query.length < 2) return suggestionsBox.innerHTML = "";
+  const query = event.target.value;
+  if (query.length < 2) return suggestionsBox.innerHTML = "";
 
-    const { data, error } = await supabase
-        .from("products")
-        .select("description")
-        .ilike("description", `%${query}%`)
-        .limit(5);
+  const { data, error } = await supabase
+    .from("products")
+    .select("description")
+    .ilike("description", `%${query}%`)
+    .limit(5);
 
-    if (error) {
-        console.error("Error fetching products:", error);
-        return;
-    }
+  if (error) {
+    console.error("Error fetching products:", error);
+    return;
+  }
 
-    suggestionsBox.innerHTML = data.map(item => `
-        <div class="suggestion-item" onclick="selectProduct('${item.description}')">
-            ${item.description}
-        </div>
-    `).join('');
+  suggestionsBox.innerHTML = data.map(item => `
+    <div class="suggestion-item" onclick="selectProduct('${item.description}')">
+      ${item.description}
+    </div>
+  `).join('');
 });
 
 function selectProduct(description) {
-    productInput.value = description;
-    suggestionsBox.innerHTML = "";
+  productInput.value = description;
+  suggestionsBox.innerHTML = "";
 }
 
 // Basic CSS for suggestions
 const style = document.createElement("style");
 style.innerHTML = `
-    .suggestion-item {
-        padding: 8px;
-        border: 1px solid #ddd;
-        cursor: pointer;
-    }
-    .suggestion-item:hover {
-        background-color: #f0f0f0;
-    }
+  .suggestion-item {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+  }
+  .suggestion-item:hover {
+    background-color: #f0f0f0;
+  }
 `;
 document.head.appendChild(style);
 
