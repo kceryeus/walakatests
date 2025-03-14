@@ -500,7 +500,7 @@
             .from('users')       // Tabela
             .select('username')  // Coluna
             .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
-            ;
+            .select();
 
           if (profileError) {
             console.error('Erro ao buscar perfil:', profileError.message);
