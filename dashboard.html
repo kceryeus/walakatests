@@ -498,9 +498,9 @@
           // Ajuste o nome da tabela e coluna conforme seu banco
           const { data: profileData, error: profileError } = await supabase
             .from('users')       // Tabela
-            .select('username')  // Coluna
+            .select('username, logo')  // Colunas
             .eq('id', user.id)   // Filtra pelo mesmo ID do usuário
-            .select();
+            .single();
 
           if (profileError) {
             console.error('Erro ao buscar perfil:', profileError.message);
@@ -510,6 +510,11 @@
           const userNameSpan = document.getElementById('user-name');
           if (userNameSpan) {
             userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido';
+          }
+
+          const userAvatar = document.querySelector('.avatar');
+          if (userAvatar && profileData?.logo) {
+            userAvatar.innerHTML = `<img src="${profileData.logo}" alt="User Logo" style="width: 100%; height: 100%; border-radius: 50%;">`;
           }
         } else {
           // Se não houver sessão ativa
