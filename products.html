@@ -260,26 +260,46 @@
     }
 
     /* Additional styles for product management */
-    #product-form {
+    .product-management {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .frame {
+      flex: 1;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
+      background-color: white;
+    }
+
+    .frame-left {
+      width: 300px; /* Fixed width */
+      height: 500px; /* Fixed height */
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 2rem;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      border-radius: var(--card-radius);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    #product-form label {
-      font-weight: 600;
+    .frame-right {
+      max-height: 500px;
+      overflow-y: auto;
     }
 
-    #product-form input,
-    #product-form select {
+    .search-bar-frame {
+      margin-bottom: 1rem;
+    }
+
+    .search-bar-frame input {
+      width: 100%;
       padding: 0.5rem;
       border: 1px solid #e2e8f0;
       border-radius: var(--card-radius);
-    }
-
-    #product-list {
-      margin-top: 2rem;
     }
 
     .product-item {
@@ -293,14 +313,98 @@
     }
 
     .product-item button {
-      background: none;
       border: none;
-      color: var(--primary-color);
       cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: var(--card-radius);
+      transition: background-color 0.3s ease;
     }
 
-    .product-item button:hover {
-      text-decoration: underline;
+    .product-item .edit-btn {
+      background-color: #fbbf24; /* Yellowish orange */
+      color: white;
+    }
+
+    .product-item .delete-btn {
+      background-color: #ef4444; /* Red */
+      color: white;
+    }
+
+    .product-item .edit-btn:hover {
+      background-color: #f59e0b; /* Darker yellowish orange */
+    }
+
+    .product-item .delete-btn:hover {
+      background-color: #dc2626; /* Darker red */
+    }
+
+    #product-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    #product-form label {
+      align-self: flex-start;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    #product-form input,
+    #product-form select,
+    #product-form button {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
+      font-size: 0.9rem;
+    }
+
+    #product-form input:focus,
+    #product-form select:focus,
+    #product-form button:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 126, 199, 0.2);
+    }
+
+    #other-vat-container {
+      display: none;
+      width: 100%;
+    }
+
+    #other-vat-container label {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    #other-vat-container input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
+      font-size: 0.9rem;
+    }
+
+    #other-vat-container input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 126, 199, 0.2);
+    }
+
+    #product-form button {
+      background-color: var(--primary-color); /* Blue */
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: var(--card-radius);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #product-form button:hover {
+      background-color: #005fa3; /* Darker blue */
     }
   </style>
 </head>
@@ -317,11 +421,11 @@
           <i class="fas fa-home"></i>
           Home
         </a>
-        <a href="#" class="nav-item active">
+        <a href="profile.html" class="nav-item">
           <i class="fas fa-users"></i>
           Clients
         </a>
-        <a href="products.html" class="nav-item">
+        <a href="#" class="nav-item  active">
           <i class="fas fa-box"></i>
           Products
         </a>
@@ -367,33 +471,41 @@
       <!-- User Defined Products Section -->
       <section id="user-defined-products">
         <h2>Manage User Defined Products</h2>
-        <form id="product-form">
-          <label for="description">Description:</label>
-          <input type="text" id="description" name="description" required>
-          
-          <label for="price">Default Price:</label>
-          <input type="number" id="price" name="price" required>
-          
-          <label for="vat">Default VAT:</label>
-          <select id="vat" name="vat" required>
-            <option value="16%">16%</option>
-            <option value="5%">5%</option>
-            <option value="exempt">Exempt</option>
-            <option value="other">Other</option>
-          </select>
-          
-          <div id="other-vat-container" style="display: none;">
-            <label for="other-vat">Other VAT Percentage:</label>
-            <input type="number" id="other-vat" name="other-vat">
+        <div class="product-management">
+          <div class="frame frame-left">
+            <form id="product-form">
+              <label for="description">Description:</label>
+              <input type="text" id="description" name="description" required>
+              
+              <label for="price">Default Price:</label>
+              <input type="number" id="price" name="price" required>
+              
+              <label for="vat">Default VAT:</label>
+              <select id="vat" name="vat" required>
+                <option value="16%">16%</option>
+                <option value="5%">5%</option>
+                <option value="exempt">Exempt</option>
+                <option value="other">Other</option>
+              </select>
+              
+              <div id="other-vat-container" style="display: none;">
+                <label for="other-vat">Other VAT Percentage:</label>
+                <input type="number" id="other-vat" name="other-vat">
+              </div>
+              
+              <button type="button" onclick="saveProduct()">Save</button>
+              <button type="button" onclick="discardChanges()">Discard</button>
+            </form>
           </div>
-          
-          <button type="button" onclick="saveProduct()">Save</button>
-          <button type="button" onclick="discardChanges()">Discard</button>
-        </form>
-        
-        <div id="product-list">
-          <h3>Product List</h3>
-          <!-- List of user defined products will be displayed here -->
+          <div class="frame frame-right">
+            <div class="search-bar-frame">
+              <input type="text" id="search-bar" placeholder="Search products..." oninput="filterProducts()">
+            </div>
+            <div id="product-list">
+              <h3>Product List</h3>
+              <!-- List of user defined products will be displayed here -->
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -496,8 +608,29 @@
         productItem.innerHTML = `
           <span>${product.description} - $${product.price} - ${product.vat}</span>
           <div>
-            <button onclick="editProduct(${index})">Edit</button>
-            <button onclick="deleteProduct(${index})">Delete</button>
+            <button class="edit-btn" onclick="editProduct(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
+          </div>
+        `;
+        productList.appendChild(productItem);
+      });
+    }
+
+    function filterProducts() {
+      const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+      const filteredProducts = products.filter(product => 
+        product.description.toLowerCase().includes(searchTerm)
+      );
+      const productList = document.getElementById('product-list');
+      productList.innerHTML = '<h3>Product List</h3>';
+      filteredProducts.forEach((product, index) => {
+        const productItem = document.createElement('div');
+        productItem.className = 'product-item';
+        productItem.innerHTML = `
+          <span>${product.description} - $${product.price} - ${product.vat}</span>
+          <div>
+            <button class="edit-btn" onclick="editProduct(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
           </div>
         `;
         productList.appendChild(productItem);
