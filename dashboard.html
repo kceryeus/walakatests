@@ -534,14 +534,14 @@
   
     async function displayUserName() {
       try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error || !data.session) {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) {
           console.error('Erro ao obter sessão:', error?.message);
           document.getElementById('user-name').textContent = 'Não logado';
           return;
         }
-  
-        const user = data.session.user;
+    
+        const user = session.user;
         if (!user) {
           document.getElementById('user-name').textContent = 'Não logado';
           return;
