@@ -225,95 +225,94 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    
-        // Initialize Supabase client
+    <script>
+        // Initialize Supabase client first
         const supabaseUrl = 'https://zqnthduqpzriydgbdojy.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbnRoZHVxcHpyaXlkZ2Jkb2p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4OTkzOTcsImV4cCI6MjA1NzQ3NTM5N30.fZqsPqkbJ4m-Lp7BRTAOuxU5_6MXj8QJERUTreshKIU';  // Replace with the anonymous key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-    
-        // Toggle Forms
-        function toggleForms() {
-            document.getElementById('loginForm').classList.toggle('active');
-            document.getElementById('signupForm').classList.toggle('active');
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbnRoZHVxcHpyaXlkZ2Jkb2p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4OTkzOTcsImV4cCI6MjA1NzQ3NTM5N30.fZqsPqkbJ4m-Lp7BRTAOuxU5_6MXj8QJERUTreshKIU';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function toggleForms() {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            
+            loginForm.classList.toggle('active');
+            signupForm.classList.toggle('active');
         }
-    
-        // Login Handler
+
         async function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             const button = event.target.querySelector('button');
-    
-            button.innerText = 'Signing in...';
+            button.innerHTML = 'Signing in...';
             button.disabled = true;
-    
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    
-            if (error) {
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+
+                console.log('Logged in:', data);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Error logging in:', error.message);
                 alert(error.message);
-                button.innerText = 'Sign In';
+                button.innerHTML = 'Sign In';
                 button.disabled = false;
-                return;
             }
-    
-            console.log('Logged in:', data);
-            window.location.href = 'dashboard.html';
         }
-    
-        // Signup Handler
+
         async function handleSignup(event) {
             event.preventDefault();
-            const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            const button = event.target.querySelector('button');
-    
+
             if (password !== confirmPassword) {
                 alert("Passwords don't match!");
                 return;
             }
-    
-            button.innerText = 'Creating account...';
+
+            const button = event.target.querySelector('button');
+            button.innerHTML = 'Creating account...';
             button.disabled = true;
-    
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: { data: { full_name: name } }
-            });
-    
-            if (error) {
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: { full_name: name }
+                    }
+                });
+
+                if (error) throw error;
+
+                console.log('Signed up:', data);
+                alert('Please check your email for verification link');
+                toggleForms(); // Switch back to login form
+            } catch (error) {
+                console.error('Error signing up:', error.message);
                 alert(error.message);
-                button.innerText = 'Create Account';
+            } finally {
+                button.innerHTML = 'Create Account';
                 button.disabled = false;
-                return;
             }
-    
-            console.log('Signed up:', data);
-            alert('Check your email for the verification link.');
-            toggleForms();
         }
-    
-        // Check if user is already logged in
+
         async function checkUser() {
-            const { data, error } = await supabase.auth.getSession();
-    
-            if (data?.session) {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
                 window.location.href = 'dashboard.html';
             }
         }
-    
-        // Event Listeners
-        document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
-        document.getElementById('signupForm')?.addEventListener('submit', handleSignup);
-    
-        // Check User on Load
+
         checkUser();
     </script>
-    
 
     <script src="auth.js"></script>
 </body>
