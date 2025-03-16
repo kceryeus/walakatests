@@ -1,33 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Factura</title>
+  <title>Products Page</title>
+  <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script>
-    // Initialize Supabase client
-    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co'
-    const supabaseKey = process.env.SUPABASE_KEY
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey)
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-  
-  * {
+    :root {
+      --primary-color: #007ec7; /* Corporate blue */
+      --secondary-color: #4f46e5;
+      --accent-color: #818cf8;
+      --background-color: #f8fafc;
+      --sidebar-width: 280px;
+      --topbar-height: 60px;
+      --card-radius: 16px;
+      --transition-speed: 0.3s;
+    }
+
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-  
-  body {
+
+    body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--background-color);
       color: #1e293b;
       min-height: 100vh;
-
-      opacity: 1;
+      overflow-x: hidden;
+      opacity: 0;
       transition: opacity 0.5s ease-in-out;
     }
 
@@ -35,7 +40,13 @@
       opacity: 1;
     }
 
-       /* Sidebar */
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
     .sidebar {
       background: linear-gradient(195deg, #007ec7, #02204e);
       color: white;
@@ -43,12 +54,10 @@
       position: sticky;
       top: 0;
       height: 100vh;
-      width: fit-content;
       display: flex;
       flex-direction: column;
       gap: 2rem;
       transition: transform var(--transition-speed) ease;
-      
     }
 
     .logo {
@@ -94,346 +103,209 @@
       text-align: center;
     }
 
-    .container {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      min-height: 100vh;
-      width: 100%;
-    }
-
+    /* Main Content */
     .main-content {
       padding: 2rem;
-      overflow-x: hidden;
-      margin-left: 250px; /* Width of sidebar */
-      width: calc(100% - 250px);
+      margin-top: var(--topbar-height);
     }
 
-    .header {
+    .top-bar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: var(--sidebar-width);
+      height: var(--topbar-height);
+      background: white;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      justify-content: space-between;
+      padding: 0 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      z-index: 100;
     }
 
-    h1 {
-      font-size: 24px;
-      color: #1e293b;
+    .search-bar {
+      flex: 1;
+      max-width: 500px;
+      position: relative;
     }
 
-    .btn {
-      background-color: #007ec7; /* Corporate blue */
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
+    .search-bar input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
+      font-size: 0.9rem;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .notification-bell {
+      position: relative;
       cursor: pointer;
     }
 
-    .btn:hover {
-      background-color: #005f99; /* Darker shade of corporate blue */
+    .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--primary-color);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.75rem;
     }
 
-    .content {
-      max-width: 100%; /* Ensure it doesn't stretch unnecessarily */
-  padding: 20px; /* Adjust padding */
-  margin: 0 auto; /* Center if needed */
-  height: auto; /* Prevent forced height */
-  
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
     }
 
-    .section {
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-      flex: 1;
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .section h2 {
-      margin-bottom: 15px;
-      font-size: 18px;
-      color: #4b5563;
-      border-bottom: 2px solid #007ec7; /* Corporate blue */
-      padding-bottom: 5px;
+    .dropdown {
+      position: relative;
+      display: inline-block;
     }
 
-    .form-group {
+    .dropdown-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #64748b;
+      padding: 0 8px;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      z-index: 1000;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 100%;
+      margin-top: 10px;
+    }
+
+    .dropdown-menu a {
+      color: #1e293b;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f1f5f9;
+    }
+
+    .user-profile:hover .dropdown-menu {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        z-index: 1000;
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .top-bar {
+        left: 0;
+      }
+
+      .main-content {
+        margin-top: calc(var(--topbar-height) + 1rem);
+        padding: 1rem;
+      }
+    }
+
+    .sign-out-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .sign-out-btn:hover {
+      background: #f1f5f9;
+      color: var(--primary-color);
+    }
+
+    /* Additional styles for product management */
+    #product-form {
       display: flex;
       flex-direction: column;
-      margin-bottom: 15px;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
-    .form-group label {
-      font-size: 12px;
-      color: #6b7280;
-      margin-bottom: 2px;
+    #product-form label {
       font-weight: 600;
     }
 
-    .form-group input, .form-group select {
-      padding: 5px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 12px;
-      color: #374151;
+    #product-form input,
+    #product-form select {
+      padding: 0.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
     }
 
-    .table-section {
-      margin-top: 20px;
+    #product-list {
+      margin-top: 2rem;
     }
 
-    table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px; /* Increased margin */
-            border-radius: 10px; /* Rounded table corners */
-            overflow: hidden; /* Ensure rounded corners are applied */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Table shadow */
-        }
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
+      margin-bottom: 0.5rem;
+    }
 
-        table th, table td {
-            border: none; /* Remove default borders */
-            padding: 15px; /* Increased padding */
-            text-align: left;
-            border-bottom: 1px solid #ddd; /* Kept bottom border for table rows */
-        }
+    .product-item button {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      cursor: pointer;
+    }
 
-        table th {
-            background-color: #007ec7; /* Corporate blue for header */
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase; /* Uppercase headers */
-            letter-spacing: 0.05em; /* Slight letter spacing */
-        }
-
-        table tbody tr:nth-child(even) {
-            background-color: #f9f9f9; /* Even row background */
-        }
-
-        table tbody tr:hover {
-            background-color: #f2f2f2; /* Hover effect on rows */
-        }
-
-        .totals {
-            text-align: right;
-            margin-top: 25px; /* Increased margin */
-        }
-
-        .totals p {
-            margin: 8px 0; /* Increased margin */
-            font-size: 18px; /* Larger totals font */
-        }
-
-        .totals p strong {
-            font-size: 20px; /* Even larger for strong text */
-        }
-
-        .invoice-list {
-            margin-top: 25px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        .invoice-list h2 {
-            margin-bottom: 20px;
-            font-size: 22px;
-            color: #4b5563;
-            border-bottom: 3px solid #007ec7;
-            padding-bottom: 8px;
-        }
-
-        .invoice-list table {
-            width: 100%;
-        }
-
-        .invoice-list th, .invoice-list td {
-            text-align: center;
-        }
-
-        .invoice-list .action-btn {
-            margin: 0 5px;
-        }
-
-        .side-by-side-container {
-            display: flex;
-            gap: 25px; /* Increased gap */
-            width: 800px; /* Kept original fixed width */
-            margin-top: 30px; /* Increased margin */
-        }
-
-        .side-by-side-container .section {
-            flex: 1;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-block;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .status-badge.active {
-            background-color: #28a745; /* Green for active */
-            color: white;
-        }
-
-        .status-badge.inactive {
-            background-color: #dc3545; /* Red for inactive */
-            color: white;
-        }
-
-        .status-badge.paid {
-            background-color: #007bff; /* Blue for paid */
-            color: white;
-        }
-
-        .status-badge.pending {
-            background-color: #ffc107; /* Yellow for pending */
-            color: #333; /* Dark text for contrast on yellow */
-        }
-
-        /* Pagination buttons */
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .btn-page {
-            background-color: #f8f9fa; /* Light background for pagination buttons */
-            color: #495057; /* Darker text color */
-            border: 1px solid #ced4da; /* Light border */
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin: 0 5px;
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-        }
-
-        .btn-page:hover, .btn-page.active {
-            background-color: #007ec7; /* Corporate blue on hover/active */
-            color: white;
-            border-color: #007ec7;
-        }
-
-        .btn-page:disabled {
-            opacity: 0.6;
-            cursor: default;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column; /* Stack sidebar and content on smaller screens */
-            }
-
-            .side-menu {
-                position: static; /* Sidebar is part of document flow */
-                width: 100%; /* Full width sidebar */
-                height: auto; /* Adjust height based on content */
-                flex-direction: row; /* Horizontal layout for menu */
-                overflow-y: auto; /* Allow vertical scrolling if needed */
-                padding: 5px 0; /* Reduce vertical padding */
-                align-items: flex-start; /* Align items to start in row direction */
-                margin-bottom: 20px; /* Margin below sidebar */
-            }
-
-            .side-menu:hover {
-                width: 100%; /* Do not expand width on hover for full width sidebar */
-            }
-
-            .side-menu h2 {
-                display: none; /* Hide title on smaller screens */
-            }
-
-            .menu {
-                display: flex; /* Menu items in a row */
-                justify-content: space-around; /* Distribute items evenly */
-                width: 100%;
-            }
-
-            .menu-item {
-                flex-direction: column; /* Icon above text */
-                text-align: center; /* Center text below icon */
-                padding: 10px 5px; /* Adjust padding for smaller items */
-                margin-bottom: 0; /* Remove bottom margin */
-            }
-
-            .menu-item span {
-                opacity: 1; /* Always show text on small screens */
-                visibility: visible;
-                font-size: 0.9em; /* Smaller font size for menu text */
-            }
-
-            .menu-item i {
-                margin-right: 0; /* Remove right margin for icon */
-                margin-bottom: 5px; /* Margin below icon */
-            }
-
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 1rem;
-            }
-
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
-        }
-
-        /* Utility class to remove item row */
-        .remove-item {
-            background: none;
-            color: red;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            padding: 0; /* Reset padding */
-            line-height: 1; /* Adjust line height to align 'x' */
-            display: inline-block; /* Ensure proper inline display */
-        }
-
-        .remove-item:hover {
-            color: darkred;
-        }
-
-        /* Action button icons */
-        .invoice-actions .btn-icon {
-            width: 1em; /* Adjust icon size as needed */
-            height: 1em;
-            margin-right: 5px;
-            vertical-align: middle; /* Align icon with text */
-             filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg); /* keep original icon color */
-        }
-
-        /* Add print styles */
-        @media print {
-            .sidebar,
-            .invoice-actions,
-            .btn {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-        }
-
+    .product-item button:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="dashboard-container">
     <!-- Sidebar -->
     <nav class="sidebar">
       <div class="logo">
@@ -441,223 +313,228 @@
         WALAKA
       </div>
       <div class="nav-menu">
-        <a href="#" class="nav-item">
+        <a href="dashboard.html" class="nav-item">
           <i class="fas fa-home"></i>
-          Dashboard
+          Home
         </a>
-        <a href="invoice.html" class="nav-item active">
-          <i class="fas fa-file-invoice"></i>
-          Faturas
+        <a href="#" class="nav-item active">
+          <i class="fas fa-users"></i>
+          Clients
         </a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-wallet"></i>
-          Contas
-        </a>
-        <a href="#" class="nav-item">
-          <i class="fas fa-chart-pie"></i>
-          Relatórios
+        <a href="products.html" class="nav-item">
+          <i class="fas fa-box"></i>
+          Products
         </a>
         <a href="#" class="nav-item">
-          <i class="fas fa-cog"></i>
-          Configurações
+          <i class="fas fa-university"></i>
+          Banks
         </a>
-        <a href="#" class="nav-item" onclick="handleSignOut()">
+        <button class="sign-out-btn" onclick="handleSignOut()">
           <i class="fas fa-sign-out-alt"></i>
-          <span>Sign Out</span>
-        </a>
+          Sign out
+        </button>
       </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main-content">
-      <div class="header">
-        <h1>Factura</h1>
-        <button id="generate-pdf" class="btn">Imprimir/Descarregar</button>
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="search-bar">
+          <input type="text" placeholder="Pesquisar...">
+        </div>
+        <div class="user-menu">
+          <div class="notification-bell">
+            <i class="fas fa-bell"></i>
+            <span class="badge">0</span>
+          </div>
+          <div class="user-profile">
+            <div class="avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span id="user-name">Loading...</span>
+            <div class="dropdown">
+              <button class="dropdown-toggle"><i class="fas fa-caret-down"></i></button>
+              <div class="dropdown-menu">
+                <a href="profile.html">Profile Management</a>
+                <a href="settings.html">General Settings</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="invoice-list">
-        <h2>Facturas Existentes</h2>
-        <div class="invoice-actions">
-          <button class="btn action-btn">
-            Visualizar
-          </button>
-          <button class="btn action-btn">
-            Editar
-          </button>
-          <button class="btn action-btn">
-            Anular
-          </button>
-          <button class="btn action-btn">
-            Enviar
-          </button>
-          <button class="btn action-btn">
-            Gravar
-          </button>
-        </div>
+      <!-- User Defined Products Section -->
+      <section id="user-defined-products">
+        <h2>Manage User Defined Products</h2>
+        <form id="product-form">
+          <label for="description">Description:</label>
+          <input type="text" id="description" name="description" required>
+          
+          <label for="price">Default Price:</label>
+          <input type="number" id="price" name="price" required>
+          
+          <label for="vat">Default VAT:</label>
+          <select id="vat" name="vat" required>
+            <option value="16%">16%</option>
+            <option value="5%">5%</option>
+            <option value="exempt">Exempt</option>
+            <option value="other">Other</option>
+          </select>
+          
+          <div id="other-vat-container" style="display: none;">
+            <label for="other-vat">Other VAT Percentage:</label>
+            <input type="number" id="other-vat" name="other-vat">
+          </div>
+          
+          <button type="button" onclick="saveProduct()">Save</button>
+          <button type="button" onclick="discardChanges()">Discard</button>
+        </form>
         
-        <div class="table-container">
-          <table class="invoice-table">
-            <thead>
-              <tr>
-                <th class="checkbox-column">
-                  <input type="checkbox" id="select-all" class="custom-checkbox">
-                  <label for="select-all"></label>
-                </th>
-                <th>ID da Factura</th>
-                <th>Cliente</th>
-                <th>Data</th>
-                <th>Valor</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="checkbox-column">
-                  <input type="checkbox" id="invoice-1" class="custom-checkbox">
-                  <label for="invoice-1"></label>
-                </td>
-                <td>FT-2025/001</td>
-                <td>Empresa ABC</td>
-                <td>11/02/2025</td>
-                <td>15.000,00 MT</td>
-                <td><span class="status-badge active">Activo</span></td>
-              </tr>
-              <tr>
-                <td class="checkbox-column">
-                  <input type="checkbox" id="invoice-2" class="custom-checkbox">
-                  <label for="invoice-2"></label>
-                </td>
-                <td>FT-2025/002</td>
-                <td>Tech Solutions</td>
-                <td>10/02/2025</td>
-                <td>8.500,00 MT</td>
-                <td><span class="status-badge inactive">Inactivo</span></td>
-              </tr>
-              <tr>
-                <td class="checkbox-column">
-                  <input type="checkbox" id="invoice-3" class="custom-checkbox">
-                  <label for="invoice-3"></label>
-                </td>
-                <td>FT-2025/003</td>
-                <td>Global Trade</td>
-                <td>09/02/2025</td>
-                <td>22.750,00 MT</td>
-                <td><span class="status-badge paid">Pago</span></td>
-              </tr>
-              <tr>
-                <td class="checkbox-column">
-                  <input type="checkbox" id="invoice-4" class="custom-checkbox">
-                  <label for="invoice-4"></label>
-                </td>
-                <td>FT-2025/004</td>
-                <td>Local Services</td>
-                <td>08/02/2025</td>
-                <td>12.300,00 MT</td>
-                <td><span class="status-badge pending">Pendente</span></td>
-              </tr>
-            </tbody>
-          </table>
+        <div id="product-list">
+          <h3>Product List</h3>
+          <!-- List of user defined products will be displayed here -->
         </div>
-      
-        <div class="pagination">
-          <button class="btn-page" disabled>&lt;</button>
-          <button class="btn-page active">1</button>
-          <button class="btn-page">2</button>
-          <button class="btn-page">3</button>
-          <button class="btn-page">&gt;</button>
-        </div>
-      </div>
-
-      <div class="side-by-side-container">
-        <div class="section">
-          <h2>Informações do Cliente</h2>
-          <div class="form-group">
-            <label for="client-name">Nome do Cliente:</label>
-            <input type="text" id="client-name" placeholder="Ex: Empresa XYZ">
-          </div>
-          <div class="form-group">
-            <label for="client-address">Endereço:</label>
-            <input type="text" id="client-address" placeholder="Ex: Bairro Central">
-          </div>
-          <div class="form-group">
-            <label for="client-NUIT">NUIT:</label>
-            <input type="text" id="client-NUIT" placeholder="Ex: 400123456">
-          </div>
-          <div class="form-group">
-            <label for="client-email">Email:</label>
-            <input type="email" id="client-email" placeholder="cliente@email.com">
-          </div>
-        </div>
-
-        <div class="section">
-          <h2>Detalhes da Factura</h2>
-          <div class="form-group">
-            <label for="issue-date">Data de Emissão:</label>
-            <input type="date" id="issue-date">
-          </div>
-          <div class="form-group">
-            <label for="due-date">Data de Vencimento:</label>
-            <input type="date" id="due-date">
-          </div>
-          <div class="form-group">
-            <label for="payment-terms">Condições de Pagamento:</label>
-            <input type="text" id="payment-terms" placeholder="Ex: Pagamento em 30 dias">
-          </div>
-          <div class="form-group">
-            <label for="invoice-description">Descrição da Factura:</label>
-            <input type="text" id="invoice-description" placeholder="Descrição do serviço prestado">
-          </div>
-        </div>
-      </div>
-
-      <div class="table-section">
-        <h2>Itens da Factura</h2>
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Descrição</th>
-              <th>Quantidade</th>
-              <th>Preço Unitário</th>
-              <th>IVA</th>
-              <th>Taxa IVA</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody id="items-body">
-            <tr>
-              <td><button class="remove-item">x</button></td>
-              <td><input type="text" placeholder="Descrição"></td>
-              <td><input type="number" value="1" min="1" class="item-quantity"></td>
-              <td><input type="number" value="0" step="0.01" class="item-price"></td>
-              <td>
-                <select class="vat-select">
-                  <option value="16" selected>16%</option>
-                  <option value="5">5%</option>
-                  <option value="0">Isento</option>
-                  <option value="custom">Outro</option>
-                </select>
-                <input type="number" step="0.01" class="custom-vat" style="display: none;" placeholder="%" />
-              </td>
-              <td class="item-vat-rate">0.00</td>
-              <td class="item-total">0.00</td>
-            </tr>
-          </tbody>
-        </table>
-        <button id="add-item" class="btn">Adicionar Item</button>
-      </div>
-
-      <div class="totals">
-        <p><strong>Subtotal:</strong> <span id="subtotal">0.00</span> MZN</p>
-        <p><strong>IVA (16%):</strong> <span id="vat">0.00</span> MZN</p>
-        <p><strong>Total Geral:</strong> <span id="total">0.00</span> MZN</p>
-      </div>
+      </section>
     </main>
   </div>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/+esm';
 
-  <!-- Move scripts to end of body -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="js/invoice.js"></script>
+    const supabaseUrl = 'https://zqnthduqpzriydgbdojy.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbnRoZHVxcHpyaXlkZ2Jkb2p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4OTkzOTcsImV4cCI6MjA1NzQ3NTM5N30.fZqsPqkbJ4m-Lp7BRTAOuxU5_6MXj8QJERUTreshKIU';
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function displayUserName() {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        if (error) {
+          console.error('Erro ao buscar usuário:', error.message);
+          return;
+        }
+        
+        if (user) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('users')
+            .select('username, logo')
+            .eq('id', user.id);
+
+          if (profileError) {
+            console.error('Erro ao buscar perfil:', profileError.message);
+            return;
+          }
+
+          const userNameSpan = document.getElementById('user-name');
+          if (userNameSpan) {
+            userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido';
+          }
+
+          const userAvatar = document.querySelector('.avatar');
+          if (userAvatar && profileData?.logo) {
+            userAvatar.innerHTML = `<img src="${profileData.logo}" alt="User Logo" style="width: 100%; height: 100%; border-radius: 50%;">`;
+          }
+        } else {
+          document.getElementById('user-name').textContent = 'Não logado';
+        }
+      } catch (err) {
+        console.error('Erro inesperado:', err);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', displayUserName);
+
+    async function handleSignOut() {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Erro ao sair:', error);
+      } else {
+        window.location.href = '/login.html';
+      }
+    }
+  </script>
+  <script>
+    document.getElementById('vat').addEventListener('change', function() {
+      if (this.value === 'other') {
+        document.getElementById('other-vat-container').style.display = 'block';
+      } else {
+        document.getElementById('other-vat-container').style.display = 'none';
+      }
+    });
+
+    let products = [];
+
+    function saveProduct() {
+      const description = document.getElementById('description').value;
+      const price = document.getElementById('price').value;
+      const vat = document.getElementById('vat').value;
+      const otherVat = document.getElementById('other-vat').value;
+
+      const product = {
+        description,
+        price,
+        vat: vat === 'other' ? otherVat : vat
+      };
+
+      products.push(product);
+      displayProducts();
+      document.getElementById('product-form').reset();
+      document.getElementById('other-vat-container').style.display = 'none';
+    }
+
+    function discardChanges() {
+      document.getElementById('product-form').reset();
+      document.getElementById('other-vat-container').style.display = 'none';
+    }
+
+    function displayProducts() {
+      const productList = document.getElementById('product-list');
+      productList.innerHTML = '<h3>Product List</h3>';
+      products.forEach((product, index) => {
+        const productItem = document.createElement('div');
+        productItem.className = 'product-item';
+        productItem.innerHTML = `
+          <span>${product.description} - $${product.price} - ${product.vat}</span>
+          <div>
+            <button onclick="editProduct(${index})">Edit</button>
+            <button onclick="deleteProduct(${index})">Delete</button>
+          </div>
+        `;
+        productList.appendChild(productItem);
+      });
+    }
+
+    function editProduct(index) {
+      const product = products[index];
+      document.getElementById('description').value = product.description;
+      document.getElementById('price').value = product.price;
+      document.getElementById('vat').value = product.vat;
+      if (product.vat === 'other') {
+        document.getElementById('other-vat-container').style.display = 'block';
+        document.getElementById('other-vat').value = product.vat;
+      } else {
+        document.getElementById('other-vat-container').style.display = 'none';
+      }
+      products.splice(index, 1);
+    }
+
+    function deleteProduct(index) {
+      products.splice(index, 1);
+      displayProducts();
+    }
+
+    const menuToggle = document.createElement('div');
+    menuToggle.className = 'menu-toggle';
+    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    document.querySelector('.top-bar').prepend(menuToggle);
+
+    menuToggle.addEventListener('click', () => {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+    });
+  </script>
 </body>
 </html>
