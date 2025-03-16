@@ -520,34 +520,38 @@
 
     async function displayUserName() {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser();
-        if (error) {
-          console.error('Erro ao buscar usuário:', error.message);
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) {
+          console.error('Erro ao obter sessão:', error?.message);
+          document.getElementById('user-name').textContent = 'Não logado';
           return;
         }
-        
-        if (user) {
-          const { data: profileData, error: profileError } = await supabase
-            .from('users')
-            .select('username, logo')
-            .eq('id', user.id);
 
-          if (profileError) {
-            console.error('Erro ao buscar perfil:', profileError.message);
-            return;
-          }
-
-          const userNameSpan = document.getElementById('user-name');
-          if (userNameSpan) {
-            userNameSpan.textContent = profileData?.username || 'Usuário Desconhecido';
-          }
-
-          const userAvatar = document.querySelector('.avatar');
-          if (userAvatar && profileData?.logo) {
-            userAvatar.innerHTML = `<img src="${profileData.logo}" alt="User Logo" style="width: 100%; height: 100%; border-radius: 50%;">`;
-          }
-        } else {
+        const user = session.user;
+        if (!user) {
           document.getElementById('user-name').textContent = 'Não logado';
+          return;
+        }
+
+        const { data: profileData, error: profileError } = await supabase
+          .from('users')
+          .select('username, logo')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Erro ao buscar perfil:', profileError.message);
+          return;
+        }
+
+        const userNameSpan = document.getElementById('user-name');
+        if (userNameSpan) {
+          userNameSpan.textContent = profileData.username || 'Usuário Desconhecido';
+        }
+
+        const userAvatar = document.querySelector('.avatar');
+        if (userAvatar && profileData.logo) {
+          userAvatar.innerHTML = `<img src="${profileData.logo}" alt="User Logo" style="width: 100%; height: 100%; border-radius: 50%;">`;
         }
       } catch (err) {
         console.error('Erro inesperado:', err);
