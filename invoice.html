@@ -794,7 +794,7 @@ productInput.addEventListener("input", async (event) => {
 
   const { data, error } = await supabase
     .from("products")
-    .select("description")
+    .select("description, price, vat")
     .ilike("description", `%${query}%`)
     .limit(5);
 
@@ -804,42 +804,26 @@ productInput.addEventListener("input", async (event) => {
   }
 
   suggestionsBox.innerHTML = data.map(item => `
-    <div class="suggestion-item" onclick="selectProduct('${item.description}')">
-      ${item.description}
+    <div class="suggestion-item">
+      ${item.description} - Preço: ${item.price} MT, IVA: ${item.vat}%
     </div>
   `).join('');
-
-  // Add event listener for keyboard navigation
-  const suggestionItems = document.querySelectorAll(".suggestion-item");
-  suggestionItems.forEach((item, index) => {
-    item.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        selectProduct(item.textContent);
-      } else if (e.key === "ArrowDown" && index < suggestionItems.length - 1) {
-        suggestionItems[index + 1].focus();
-      } else if (e.key === "ArrowUp" && index > 0) {
-        suggestionItems[index - 1].focus();
-      }
-    });
-  });
+  suggestionsBox.style.display = "block";
 });
 
-productInput.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowDown") {
-    const firstSuggestion = document.querySelector(".suggestion-item");
-    if (firstSuggestion) {
-      firstSuggestion.focus();
-    }
+document.addEventListener("click", (e) => {
+  if (!productInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+    suggestionsBox.style.display = "none";
   }
 });
 
-function selectProduct(description) {
+function selectProduct(description, price, vat) {
   productInput.value = description;
-  suggestionsBox.innerHTML = "";
-  addItemToInvoice(description);
+  suggestionsBox.innerHTML = ""; // Clear suggestions
+  addItemToInvoice(description, price, vat); // Add item to the invoice
 }
 
-function addItemToInvoice(description) {
+function addItemToInvoice(description, price, vat) {
   const itemsBody = document.getElementById("items-body");
   const newRow = document.createElement("tr");
 
@@ -847,10 +831,10 @@ function addItemToInvoice(description) {
     <td><button class="remove-item" onclick="removeItem(this)">x</button></td>
     <td><input type="text" value="${description}" readonly></td>
     <td><input type="number" value="1" min="1" class="item-quantity"></td>
-    <td><input type="number" value="0" step="0.01" class="item-price"></td>
+    <td><input type="number" value="${price}" step="0.01" class="item-price"></td>
     <td>
       <select class="vat-select">
-        <option value="16" selected>16%</option>
+        <option value="${vat}" selected>${vat}%</option>
         <option value="5">5%</option>
         <option value="0">Isento</option>
         <option value="custom">Outro</option>
@@ -895,16 +879,25 @@ function updateTotals() {
   document.getElementById("total").textContent = (subtotal + vat).toFixed(2);
 }
 
-// Basic CSS for suggestions
+// Improved CSS for suggestions
 const style = document.createElement("style");
 style.innerHTML = `
-  .suggestion-item {
+  #suggestions {
     padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .suggestion-item {
+    padding: 8px 12px;
     border-bottom: 1px solid #ddd;
-    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+  }
+  .suggestion-item:last-child {
+    border-bottom: none;
   }
   .suggestion-item:hover {
-    background-color: #f0f0f0;
+    background-color: #f9f9f9;
   }
 `;
 document.head.appendChild(style);
