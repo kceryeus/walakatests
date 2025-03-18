@@ -378,7 +378,7 @@
             <div class="metrics-grid">
                 <div class="metric-card">
                     <div class="metric-label">Clientes Registrados</div>
-                    <div class="metric-value">0</div>
+                    <div class="metric-value"  onclick="window.location.href='clients.html'">0</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-label">Produtos</div>
@@ -450,7 +450,51 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', displayUserName);
+        async function updateProductCount() {
+            try {
+                const { count, error } = await supabase
+                    .from('products')
+                    .select('*', { count: 'exact' });
+
+                if (error) {
+                    console.error('Error fetching product count:', error);
+                    return;
+                }
+
+                const productMetric = document.querySelector('.metric-card:nth-child(2) .metric-value');
+                if (productMetric) {
+                    productMetric.textContent = count || 0;
+                }
+            } catch (err) {
+                console.error('Unexpected error:', err);
+            }
+        }
+
+        async function updateClientCount() {
+            try {
+                const { count, error } = await supabase
+                    .from('clients')
+                    .select('*', { count: 'exact' });
+
+                if (error) {
+                    console.error('Error fetching client count:', error);
+                    return;
+                }
+
+                const clientMetric = document.querySelector('.metric-card:nth-child(1) .metric-value');
+                if (clientMetric) {
+                    clientMetric.textContent = count || 0;
+                }
+            } catch (err) {
+                console.error('Unexpected error:', err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            displayUserName();
+            updateProductCount();
+            updateClientCount(); // Fetch and display client count
+        });
 
         async function handleSignOut() {
             const { error } = await supabase.auth.signOut();

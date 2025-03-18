@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products Page</title>
+  <title>Clients Page</title>
   <link rel="stylesheet" href="./styles.css"> <!-- Ensure correct relative path -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -32,8 +32,7 @@
       color: #1e293b;
       min-height: 100vh;
       overflow-x: hidden;
-      opacity: 0;
-      transition: opacity 0.5s ease-in-out;
+      opacity: 1;
     }
 
     body.loaded {
@@ -259,8 +258,8 @@
       color: var(--primary-color);
     }
 
-    /* Additional styles for product management */
-    .product-management {
+    /* Additional styles for client management */
+    .client-management {
       display: flex;
       gap: 2rem;
     }
@@ -308,7 +307,7 @@
       border-radius: var(--card-radius);
     }
 
-    .product-item {
+    .client-item {
       display: grid;
       grid-template-columns: 1fr auto; /* Separate text and buttons into their own "frames" */
       align-items: center; /* Ensure vertical alignment */
@@ -318,7 +317,7 @@
       margin-bottom: 0.5rem;
     }
 
-    .product-item button {
+    .client-item button {
       font-size: 0.7rem; /* Slightly smaller font size */
       border: none;
       cursor: pointer;
@@ -327,40 +326,40 @@
       transition: background-color 0.3s ease;
     }
 
-    .product-item .edit-btn {
+    .client-item .edit-btn {
       background-color: #fbbf24; /* Yellowish orange */
       color: white;
     }
 
-    .product-item .delete-btn {
+    .client-item .delete-btn {
       background-color: #ef4444; /* Red */
       color: white;
     }
 
-    .product-item .edit-btn:hover {
+    .client-item .edit-btn:hover {
       background-color: #f59e0b; /* Darker yellowish orange */
     }
 
-    .product-item .delete-btn:hover {
+    .client-item .delete-btn:hover {
       background-color: #dc2626; /* Darker red */
     }
 
-    #product-form {
+    #client-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.2rem;
       width: 100%;
     }
 
-    #product-form label {
+    #client-form label {
       align-self: flex-start;
       font-weight: 600;
       color: var(--primary-color);
     }
 
-    #product-form input,
-    #product-form select,
-    #product-form button {
+    #client-form input,
+    #client-form select,
+    #client-form button {
       width: 100%;
       padding: 0.75rem;
       border: 1px solid #e2e8f0;
@@ -368,9 +367,9 @@
       font-size: 0.9rem;
     }
 
-    #product-form input:focus,
-    #product-form select:focus,
-    #product-form button:focus {
+    #client-form input:focus,
+    #client-form select:focus,
+    #client-form button:focus {
       outline: none;
       border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(0, 126, 199, 0.2);
@@ -400,7 +399,7 @@
       box-shadow: 0 0 0 3px rgba(0, 126, 199, 0.2);
     }
 
-    #product-form button {
+    #client-form button {
       background-color: var(--primary-color); /* Blue */
       color: white;
       border: none;
@@ -410,12 +409,12 @@
       transition: background-color 0.3s ease;
     }
 
-    #product-form button:hover {
+    #client-form button:hover {
       background-color: #005fa3; /* Darker blue */
     }
 
     .search-bar-frame,
-    #product-list h3 {
+    #client-list h3 {
       position: sticky; /* Fix both the search bar and header */
       top: 0;
       background-color: white;
@@ -423,7 +422,7 @@
       padding: 0.5rem 0;
     }
 
-    #product-list h3 {
+    #client-list h3 {
       margin: 0; /* Remove default margin for better alignment */
       border-bottom: 1px solid #e2e8f0; /* Add a separator */
       position: sticky; /* Fix the header below the search bar */
@@ -448,11 +447,11 @@
           <i class="fas fa-home"></i>
           Home
         </a>
-        <a href="profile.html" class="nav-item">
+        <a href="profile.html" class="nav-item active">
           <i class="fas fa-users"></i>
           Clients
         </a>
-        <a href="#" class="nav-item  active">
+        <a href="products.html" class="nav-item">
           <i class="fas fa-box"></i>
           Products
         </a>
@@ -495,42 +494,41 @@
         </div>
       </div>
 
-      <!-- User Defined Products Section -->
-      <section id="user-defined-products">
-        <h2>Manage User Defined Products</h2>
-        <div class="product-management">
+      <!-- User Defined Clients Section -->
+      <section id="user-defined-clients">
+        <h2>Manage User Defined Clients</h2>
+        <div class="client-management">
           <div class="frame frame-left">
-            <form id="product-form">
-              <label for="description">Description:</label>
-              <input type="text" id="description" name="description" required>
+            <form id="client-form">
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" required>
               
-              <label for="price">Default Price:</label>
-              <input type="number" id="price" name="price" required>
+              <label for="nuit">NUIT:</label>
+              <input type="text" id="nuit" name="nuit">
               
-              <label for="vat">Default VAT:</label>
-              <select id="vat" name="vat" required>
-                <option value="0.16">16%</option>
-                <option value="0.05">5%</option>
-                <option value="0">Exempt</option>
-                <option value="other">Other</option>
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email">
+              
+              <label for="phone">Phone Number:</label>
+              <input type="text" id="phone" name="phone">
+              
+              <label for="status">Status:</label>
+              <select id="status" name="status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
               </select>
               
-              <div id="other-vat-container" style="display: none;">
-                <label for="other-vat">Other VAT Percentage:</label>
-                <input type="number" id="other-vat" name="other-vat">
-              </div>
-              
-              <button type="button" onclick="saveProduct()">Save</button>
+              <button type="button" onclick="saveClient()">Save</button>
               <button type="button" onclick="discardChanges()">Discard</button>
             </form>
           </div>
           <div class="frame frame-right">
             <div class="search-bar-frame">
-              <input type="text" id="search-bar" placeholder="Search products..." oninput="filterProducts()">
+              <input type="text" id="search-bar" placeholder="Search clients..." oninput="filterClients()">
             </div>
-            <div id="product-list">
-              <h3>Product List</h3>
-              <!-- List of user defined products will be displayed here -->
+            <div id="client-list">
+              <h3>Client List</h3>
+              <!-- List of user defined clients will be displayed here -->
             </div>
           </div>
         </div>
@@ -596,179 +594,185 @@
       }
     }
 
-    let products = [];
+    let clients = [];
 
-    function formatCurrency(value) {
-      return `MZN ${value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ').replace('.', ',')}`;
-    }
-
-    function formatVatForDisplay(vat) {
-      return `${(vat * 100).toFixed(0)}%`; // Convert decimal to percentage for display
-    }
-
-    function parseVatFromDisplay(vatDisplay) {
-      return parseFloat(vatDisplay.replace('%', '')); // Convert percentage back to decimal for storage
-    }
-
-    async function fetchProducts() {
+    async function fetchClients() {
       const { data, count, error } = await supabase
-        .from('products')
+        .from('clients')
         .select('*', { count: 'exact' });
 
       if (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching clients:', error);
         return;
       }
 
-      products = data;
-      displayProducts();
+      clients = data;
+      displayClients();
 
-      // Update product count in the header
-      const productListHeader = document.querySelector('#product-list h3');
-      if (productListHeader) {
-        productListHeader.textContent = `Product List (${count || 0})`;
+      const clientListHeader = document.querySelector('#client-list h3');
+      if (clientListHeader) {
+        clientListHeader.textContent = `Client List (${count || 0})`;
       }
     }
 
-    async function saveProduct() {
-      const description = document.getElementById('description').value;
-      const price = parseFloat(document.getElementById('price').value);
-      const vatDisplay = document.getElementById('vat').value === 'other' 
-        ? `${document.getElementById('other-vat').value}%` 
-        : document.getElementById('vat').value;
-      const vat = parseVatFromDisplay(vatDisplay);
+    async function saveClient() {
+      const name = document.getElementById('name').value;
+      const nuit = document.getElementById('nuit').value || null;
+      const email = document.getElementById('email').value || null;
+      const phone = document.getElementById('phone').value || null;
+      const status = document.getElementById('status').value; // Trim whitespace
 
-      const { data, error } = await supabase
-        .from('products')
-        .insert([{ description, price, vat }])
-        .select(); // Ensure the inserted row is returned
-
-      if (error) {
-        console.error('Error saving product:', error);
+      if (!name) {
+        console.error('Error: Name is required.');
+        alert('Please provide a name.');
         return;
       }
 
-      products.push(data[0]); // Add the new product to the local array
-      displayProducts();
-      document.getElementById('product-form').reset();
-      document.getElementById('other-vat-container').style.display = 'none';
-    }
+      // Log the data being sent to Supabase
+      console.log('Inserting client:', { name, nuit, email, phone, status });
 
-    async function editProduct(index) {
-      const product = products[index];
-      document.getElementById('description').value = product.description;
-      document.getElementById('price').value = product.price;
-      document.getElementById('vat').value = product.vat === 0 ? '0' : formatVatForDisplay(product.vat);
-      if (document.getElementById('vat').value === 'other') {
-        document.getElementById('other-vat-container').style.display = 'block';
-        document.getElementById('other-vat').value = (product.vat * 100).toFixed(0); // Show as percentage
-      } else {
-        document.getElementById('other-vat-container').style.display = 'none';
-      }
-
-      const saveButton = document.querySelector('#product-form button[type="button"]');
-      saveButton.onclick = async function () {
-        const updatedDescription = document.getElementById('description').value;
-        const updatedPrice = parseFloat(document.getElementById('price').value);
-        const updatedVatDisplay = document.getElementById('vat').value === 'other' 
-          ? `${document.getElementById('other-vat').value}%` 
-          : document.getElementById('vat').value;
-        const updatedVat = parseVatFromDisplay(updatedVatDisplay);
-
-        const { error } = await supabase
-          .from('products')
-          .update({ description: updatedDescription, price: updatedPrice, vat: updatedVat })
-          .eq('id', product.id);
+      try {
+        // Test with hardcoded status value
+        const { data, error } = await supabase
+          .from('clients')
+          .insert([{ name, nuit, email, phone, status: status }]) // Replace 'active' with status to test
+          .select();
 
         if (error) {
-          console.error('Error updating product:', error);
+          console.error('Error saving client:', error.message);
+          alert(`Error saving client: ${error.message}`);
           return;
         }
 
-        products[index] = { ...product, description: updatedDescription, price: updatedPrice, vat: updatedVat };
-        displayProducts();
-        document.getElementById('product-form').reset();
-        document.getElementById('other-vat-container').style.display = 'none';
-        saveButton.onclick = saveProduct; // Reset save button to default behavior
+        clients.push(data[0]);
+        displayClients();
+        document.getElementById('client-form').reset();
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        alert('An unexpected error occurred. Please try again.');
+      }
+    }
+
+    async function editClient(index) {
+      const client = clients[index];
+      document.getElementById('name').value = client.name;
+      document.getElementById('nuit').value = client.nuit || '';
+      document.getElementById('email').value = client.email || '';
+      document.getElementById('phone').value = client.phone || '';
+      document.getElementById('status').value = client.status;
+
+      const saveButton = document.querySelector('#client-form button[type="button"]');
+      saveButton.onclick = async function () {
+        const updatedName = document.getElementById('name').value;
+        const updatedNuit = document.getElementById('nuit').value || null;
+        const updatedEmail = document.getElementById('email').value || null;
+        const updatedPhone = document.getElementById('phone').value || null;
+        const updatedStatus = document.getElementById('status').value;
+
+        const { error } = await supabase
+          .from('clients')
+          .update({ name: updatedName, nuit: updatedNuit, email: updatedEmail, phone: updatedPhone, status: updatedStatus })
+          .eq('id', client.id);
+
+        if (error) {
+          console.error('Error updating client:', error);
+          return;
+        }
+
+        clients[index] = { ...client, name: updatedName, nuit: updatedNuit, email: updatedEmail, phone: updatedPhone, status: updatedStatus };
+        displayClients();
+        document.getElementById('client-form').reset();
+        saveButton.onclick = saveClient;
       };
     }
 
-    async function deleteProduct(index) {
-      const product = products[index];
-      const { error } = await supabase.from('products').delete().eq('id', product.id);
+    async function deleteClient(index) {
+      const client = clients[index];
+      const { error } = await supabase.from('clients').delete().eq('id', client.id);
       if (error) {
-        console.error('Error deleting product:', error);
+        console.error('Error deleting client:', error);
         return;
       }
-      products.splice(index, 1);
-      displayProducts();
+      clients.splice(index, 1);
+      displayClients();
     }
 
-    function displayProducts() {
-      const productList = document.getElementById('product-list');
-      productList.innerHTML = '<h3>Product List</h3>';
-      products.forEach((product, index) => {
-        const productItem = document.createElement('div');
-        productItem.className = 'product-item';
-        productItem.innerHTML = `
-          <span>${product.description} - ${formatCurrency(product.price)} - ${formatVatForDisplay(product.vat)}</span>
+    async function toggleClientStatus(index) {
+      const client = clients[index];
+      const updatedStatus = client.status === 'active' ? 'inactive' : 'active';
+
+      const { error } = await supabase
+        .from('clients')
+        .update({ status: updatedStatus })
+        .eq('id', client.id);
+
+      if (error) {
+        console.error('Error toggling client status:', error);
+        return;
+      }
+
+      clients[index].status = updatedStatus;
+      displayClients();
+    }
+
+    function displayClients() {
+      const clientList = document.getElementById('client-list');
+      clientList.innerHTML = '<h3>Client List</h3>';
+      clients.forEach((client, index) => {
+        const clientItem = document.createElement('div');
+        clientItem.className = 'client-item';
+        clientItem.innerHTML = `
+          <span>${client.name} - ${client.nuit || 'N/A'} - ${client.email || 'N/A'} - ${client.phone || 'N/A'} - ${client.status}</span>
           <div>
-            <button class="edit-btn" onclick="editProduct(${index})">Edit</button>
-            <button class="delete-btn" onclick="deleteProduct(${index})">Delete</button>
+            <button class="edit-btn" onclick="editClient(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteClient(${index})">Delete</button>
+            <button class="status-btn" onclick="toggleClientStatus(${index})">${client.status === 'active' ? 'Inactivate' : 'Activate'}</button>
           </div>
         `;
-        productList.appendChild(productItem);
+        clientList.appendChild(clientItem);
       });
     }
 
-    function subscribeToProducts() {
+    function subscribeToClients() {
       supabase
-        .channel('products-changes')
+        .channel('clients-changes')
         .on(
           'postgres_changes',
-          { event: '*', schema: 'public', table: 'products' },
+          { event: '*', schema: 'public', table: 'clients' },
           (payload) => {
             console.log('Change received:', payload);
-            fetchProducts(); // Refresh the product list on any change
+            fetchClients();
           }
         )
         .subscribe();
     }
 
     // Attach functions to the global window object
-    window.saveProduct = saveProduct;
-    window.editProduct = editProduct;
-    window.deleteProduct = deleteProduct;
-    window.filterProducts = filterProducts; // Attach filterProducts globally
+    window.saveClient = saveClient;
+    window.editClient = editClient;
+    window.deleteClient = deleteClient;
+    window.filterClients = filterClients;
 
     window.addEventListener('DOMContentLoaded', () => {
-      fetchProducts();
-      subscribeToProducts(); // Start listening for real-time updates
+      fetchClients();
+      subscribeToClients();
     });
 
-    function filterProducts() {
+    function filterClients() {
       const searchTerm = document.getElementById('search-bar').value.toLowerCase();
-      const productItems = document.querySelectorAll('.product-item');
+      const clientItems = document.querySelectorAll('.client-item');
 
-      productItems.forEach((item) => {
-        const productText = item.querySelector('span').textContent.toLowerCase();
-        if (productText.includes(searchTerm)) {
-          item.style.display = 'grid'; // Show matching items
+      clientItems.forEach((item) => {
+        const clientText = item.querySelector('span').textContent.toLowerCase();
+        if (clientText.includes(searchTerm)) {
+          item.style.display = 'grid';
         } else {
-          item.style.display = 'none'; // Hide non-matching items
+          item.style.display = 'none';
         }
       });
     }
   </script>
   <script>
-    document.getElementById('vat').addEventListener('change', function() {
-      if (this.value === 'other') {
-        document.getElementById('other-vat-container').style.display = 'block';
-      } else {
-        document.getElementById('other-vat-container').style.display = 'none';
-      }
-    });
-
     const menuToggle = document.createElement('div');
     menuToggle.className = 'menu-toggle';
     menuToggle.innerHTML = '<i class="fas fa-bars"></i>';

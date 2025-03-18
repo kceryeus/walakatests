@@ -1,51 +1,900 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Supabase Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WALAKA - Settings</title>
+  
+  <!-- External Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary-color: #007ec7;
+      --secondary-color: #4f46e5;
+      --accent-color: #818cf8;
+      --background-color: #f8fafc;
+      --sidebar-width: 280px;
+      --topbar-height: 60px;
+      --card-radius: 16px;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--background-color);
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    body.loaded {
+      opacity: 1;
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(195deg, #007ec7, #02204e);
+      color: white;
+      padding: 2rem 1.5rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      transition: transform var(--transition-speed) ease;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--card-radius);
+      transition: all var(--transition-speed) ease;
+    }
+
+    .logo:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--card-radius);
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+
+    .nav-item i {
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 2rem;
+      margin-top: var(--topbar-height);
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: var(--sidebar-width);
+      height: var(--topbar-height);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+    }
+
+    .search-bar {
+      flex: 1;
+      max-width: 500px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
+      font-size: 0.9rem;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--primary-color);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #64748b;
+      padding: 0 8px;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      z-index: 1000;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 100%;
+      margin-top: 10px;
+    }
+
+    .dropdown-menu a {
+      color: #1e293b;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      background-color: #f1f5f9;
+    }
+
+    .user-profile:hover .dropdown-menu {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: fixed;
+        z-index: 1000;
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .top-bar {
+        left: 0;
+      }
+
+      .main-content {
+        margin-top: calc(var(--topbar-height) + 1rem);
+        padding: 1rem;
+      }
+    }
+
+    .sign-out-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .sign-out-btn:hover {
+      background: #f1f5f9;
+      color: var(--primary-color);
+    }
+
+    /* Settings Section Styling */
+    section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: white;
+      border-radius: var(--card-radius);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    section h2 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    form div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    input,
+    select {
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--card-radius);
+      font-size: 0.9rem;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 126, 199, 0.2);
+    }
+
+    input[type="file"] {
+      padding: 0.5rem;
+    }
+
+    input[type="color"] {
+      width: 50px;
+      height: 40px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Adjust the size of the Upload Logo button */
+    #appearance-settings button {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    /* Style for country dropdown with flags */
+    #country {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #country option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    #edit-user-settings {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--card-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    #edit-user-settings:hover {
+      background-color: var(--secondary-color);
+    }
+
+    #save-user-settings {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--card-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    #save-user-settings:hover {
+      background-color: var(--secondary-color);
+    }
+  </style>
 </head>
 <body>
-  <h2>Supabase User Test</h2>
-  <p id="user-info">Fetching user data...</p>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="logo">
+        <i class="fas fa-chart-line"></i>
+        WALAKA
+      </div>
+      <div class="nav-menu">
+        <a href="dashboard.html" class="nav-item">
+          <i class="fas fa-home"></i>
+          Dashboard
+        </a>
+        <a href="invoice.html" class="nav-item">
+          <i class="fas fa-file-invoice"></i>
+          Facturas
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fas fa-wallet"></i>
+          Contas
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fas fa-chart-pie"></i>
+          Relatórios
+        </a>
+        <a href="#" class="nav-item active">
+          <i class="fas fa-cog"></i>
+          Configurações
+        </a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="search-bar">
+          <input type="text" placeholder="Pesquisar...">
+        </div>
+        <div class="user-menu">
+          <div class="notification-bell">
+            <i class="fas fa-bell"></i>
+            <span class="badge">0</span>
+          </div>
+          <div class="user-profile">
+            <div class="avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <span id="user-name">Loading...</span>
+            <div class="dropdown">
+              <button class="dropdown-toggle"><i class="fas fa-caret-down"></i></button>
+              <div class="dropdown-menu">
+                <a href="profile.html">Profile Management</a>
+                <a href="settings.html">General Settings</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <section>
+        <h2>Settings</h2>
+      </section>
+
+      <section>
+        <h2>User Data</h2>
+        <form id="user-settings-form">
+          <div>
+            <label for="user-name-input">Name:</label>
+            <input type="text" id="user-name-input" name="user-name" placeholder="Enter your name" disabled required>
+          </div>
+          <div>
+            <label for="user-email-input">Email:</label>
+            <input type="email" id="user-email-input" name="user-email" placeholder="Enter your email" disabled required>
+          </div>
+          <button type="button" id="edit-user-settings">Edit</button>
+          <button type="button" id="save-user-settings" style="display: none;">Save</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Appearance</h2>
+        <form id="appearance-settings">
+          <div>
+            <label for="company-logo">Upload Logo:</label>
+            <input type="file" id="company-logo" name="company-logo" accept="image/*">
+          </div>
+          <div>
+            <label for="invoice-template">Default Invoice Template:</label>
+            <select id="invoice-template" name="invoice-template">
+              <option value="template1">Template 1</option>
+              <option value="template2">Template 2</option>
+              <option value="template3">Template 3</option>
+            </select>
+          </div>
+          <div>
+            <label for="invoice-color">Default Invoice Color:</label>
+            <input type="color" id="invoice-color" name="invoice-color" value="#007ec7">
+          </div>
+        </form>
+      </section>
+
+      <section>
+        <h2>Location and Language</h2>
+        <form id="location-language-settings">
+          <div>
+            <label for="country">Country of Origin:</label>
+            <select id="country" name="country">
+              <option value="" disabled selected>Loading countries...</option>
+            </select>
+          </div>
+          <div>
+            <label for="time-zone">Time Zone:</label>
+            <select id="time-zone" name="time-zone">
+              <option value="" disabled selected>Loading time zones...</option>
+            </select>
+            <small id="live-time" style="display: block; margin-top: 0.5rem; color: var(--primary-color);"></small>
+          </div>
+          <div>
+            <label for="language">Preferred Language:</label>
+            <select id="language" name="language">
+              <option value="pt">Portuguese</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+        </form>
+      </section>
+
+      <section>
+        <h2>Currency</h2>
+        <form id="currency-settings">
+          <div>
+            <label for="default-currency">Default Currency:</label>
+            <select id="default-currency" name="default-currency">
+              <option value="MZN" selected>MZN (Mozambican Metical)</option>
+              <option value="USD">USD (US Dollar)</option>
+              <option value="EUR">EUR (Euro)</option>
+              <option value="GBP">GBP (British Pound)</option>
+              <option value="ZAR">ZAR (South African Rand)</option>
+            </select>
+          </div>
+          <div>
+            <label for="secondary-currency">Secondary Currency:</label>
+            <select id="secondary-currency" name="secondary-currency">
+              <option value="USD" selected>USD (US Dollar)</option>
+              <option value="EUR">EUR (Euro)</option>
+              <option value="GBP">GBP (British Pound)</option>
+              <option value="ZAR">ZAR (South African Rand)</option>
+              <option value="MZN">MZN (Mozambican Metical)</option>
+            </select>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.0.0/+esm';
 
-    const supabaseUrl = 'https://zkqjmozftqmyaycpmlxn.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcWptb3pmdHFteWF5Y3BtbHhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk5NjQzNDcsImV4cCI6MjA1NTU0MDM0N30.Zm5OF9jyoc6dbDQIGiOiEen-q0zfZjh_GzjWUmD8eqk';
-    
+    const supabaseUrl = 'https://zqnthduqpzriydgbdojy.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxbnRoZHVxcHpyaXlkZ2Jkb2p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE4OTkzOTcsImV4cCI6MjA1NzQ3NTM5N30.fZqsPqkbJ4m-Lp7BRTAOuxU5_6MXj8QJERUTreshKIU';
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    async function fetchUser() {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      
-      if (authError) {
-        console.error('Auth error:', authError.message);
-        document.getElementById('user-info').textContent = 'Auth error: ' + authError.message;
-        return;
-      }
-
-      if (user) {
-        const { data, error: userError } = await supabase
-          .from('users') // Table name
-          .select('username') // Column name
-          .eq('id', user.id) // Matching by user ID
-          .single();
-
-        if (userError) {
-          console.error('User fetch error:', userError.message);
-          document.getElementById('user-info').textContent = 'User fetch error: ' + userError.message;
+    async function displayUserName() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) {
+          console.error('Erro ao obter sessão:', error?.message);
+          document.getElementById('user-name').textContent = 'Não logado';
           return;
         }
 
-        document.getElementById('user-info').textContent = `Hello, ${data.username || 'Unknown User'}!`;
-      } else {
-        document.getElementById('user-info').textContent = 'No user found.';
+        const user = session.user;
+        if (!user) {
+          document.getElementById('user-name').textContent = 'Não logado';
+          return;
+        }
+
+        const { data: profileData, error: profileError } = await supabase
+          .from('users')
+          .select('username, logo')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Erro ao buscar perfil:', profileError.message);
+          return;
+        }
+
+        const userNameSpan = document.getElementById('user-name');
+        if (userNameSpan) {
+          userNameSpan.textContent = profileData.username || 'Usuário Desconhecido';
+        }
+
+        const userAvatar = document.querySelector('.avatar');
+        if (userAvatar && profileData.logo) {
+          userAvatar.innerHTML = `<img src="${profileData.logo}" alt="User Logo" style="width: 100%; height: 100%; border-radius: 50%;">`;
+        }
+      } catch (err) {
+        console.error('Erro inesperado:', err);
       }
     }
 
-    window.addEventListener('DOMContentLoaded', fetchUser);
+    window.addEventListener('DOMContentLoaded', displayUserName);
+
+    async function handleSignOut() {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Error signing out:', error);
+      } else {
+        window.location.href = '/login.html';
+      }
+    }
+
+    async function saveSettings() {
+      try {
+        // Collect Appearance Settings
+        const logoFile = document.getElementById('company-logo').files[0];
+        const invoiceTemplate = document.getElementById('invoice-template').value;
+        const invoiceColor = document.getElementById('invoice-color').value;
+
+        // Collect Location and Language Settings
+        const country = document.getElementById('country').value;
+        const timeZone = document.getElementById('time-zone').value;
+        const language = document.getElementById('language').value;
+
+        // Collect Currency Settings
+        const defaultCurrency = document.getElementById('default-currency').value;
+
+        // Log settings for debugging
+        console.log('Saving settings:', {
+          logoFile,
+          invoiceTemplate,
+          invoiceColor,
+          country,
+          timeZone,
+          language,
+          defaultCurrency,
+        });
+
+        // Example: Upload logo to Supabase storage (if a file is selected)
+        if (logoFile) {
+          const { data, error } = await supabase.storage
+            .from('logos')
+            .upload(`company-logos/${logoFile.name}`, logoFile);
+
+          if (error) {
+            console.error('Error uploading logo:', error.message);
+            alert('Failed to upload logo. Please try again.');
+            return;
+          }
+
+          console.log('Logo uploaded successfully:', data);
+        }
+
+        // Save other settings to the database (example)
+        const { error } = await supabase
+          .from('settings')
+          .upsert({
+            invoice_template: invoiceTemplate,
+            invoice_color: invoiceColor,
+            country,
+            time_zone: timeZone,
+            language,
+            default_currency: defaultCurrency,
+          });
+
+        if (error) {
+          console.error('Error saving settings:', error.message);
+          alert('Failed to save settings. Please try again.');
+          return;
+        }
+
+        alert('Settings saved successfully!');
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        alert('An unexpected error occurred. Please try again.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const saveButton = document.createElement('button');
+      saveButton.textContent = 'Save Settings';
+      saveButton.style.marginTop = '1rem';
+      saveButton.style.padding = '0.75rem 1.5rem';
+      saveButton.style.backgroundColor = 'var(--primary-color)';
+      saveButton.style.color = 'white';
+      saveButton.style.border = 'none';
+      saveButton.style.borderRadius = 'var(--card-radius)';
+      saveButton.style.cursor = 'pointer';
+      saveButton.style.fontSize = '1rem';
+      saveButton.addEventListener('click', saveSettings);
+
+      document.querySelector('.main-content').appendChild(saveButton);
+    });
+
+    async function uploadLogo() {
+      try {
+        const logoFile = document.getElementById('company-logo').files[0];
+        if (!logoFile) {
+          alert('Please select a logo file to upload.');
+          return;
+        }
+
+        // Get the current user
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !session) {
+          console.error('Error fetching session:', sessionError?.message);
+          alert('You must be logged in to upload a logo.');
+          return;
+        }
+
+        const userId = session.user.id;
+
+        // Upload the logo to the "logos" bucket
+        const filePath = `company-logos/${userId}-${logoFile.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('logos')
+          .upload(filePath, logoFile, { upsert: true });
+
+        if (uploadError) {
+          console.error('Error uploading logo:', uploadError.message);
+          alert('Failed to upload logo. Please try again.');
+          return;
+        }
+
+        // Get the public URL of the uploaded logo
+        const { data: publicUrlData, error: publicUrlError } = supabase.storage
+          .from('logos')
+          .getPublicUrl(filePath);
+
+        if (publicUrlError || !publicUrlData.publicUrl) {
+          console.error('Error fetching public URL:', publicUrlError?.message);
+          alert('Failed to retrieve the public URL of the uploaded logo.');
+          return;
+        }
+
+        const logoUrl = publicUrlData.publicUrl;
+
+        // Update the user's logo column in the "users" table
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ logo: logoUrl })
+          .eq('id', userId);
+
+        if (updateError) {
+          console.error('Error updating user logo:', updateError.message);
+          alert('Failed to update user profile with the logo URL.');
+          return;
+        }
+
+        // Copy the logo URL to the clipboard
+        navigator.clipboard.writeText(logoUrl).then(() => {
+          alert('Logo uploaded successfully! The link has been copied to your clipboard.');
+        }).catch(() => {
+          alert('Logo uploaded successfully! Copy the link manually: ' + logoUrl);
+        });
+
+        console.log('Logo uploaded and user profile updated successfully:', logoUrl);
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        alert('An unexpected error occurred. Please try again.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const uploadButton = document.createElement('button');
+      uploadButton.textContent = 'Upload Logo';
+      uploadButton.style.marginTop = '1rem';
+      uploadButton.style.padding = '0.75rem 1.5rem';
+      uploadButton.style.backgroundColor = 'var(--primary-color)';
+      uploadButton.style.color = 'white';
+      uploadButton.style.border = 'none';
+      uploadButton.style.borderRadius = 'var(--card-radius)';
+      uploadButton.style.cursor = 'pointer';
+      uploadButton.style.fontSize = '1rem';
+      uploadButton.addEventListener('click', uploadLogo);
+
+      document.querySelector('#appearance-settings').appendChild(uploadButton);
+    });
+
+    async function loadCountries() {
+      try {
+        const response = await fetch('https://restcountries.com/v3.1/all');
+        const countries = await response.json();
+        const countrySelect = document.getElementById('country');
+        countrySelect.innerHTML = countries
+          .sort((a, b) => a.name.common.localeCompare(b.name.common))
+          .map(
+            country => `
+              <option value="${country.name.common}">
+                ${country.flag} ${country.name.common}
+              </option>
+            `
+          )
+          .join('');
+      } catch (err) {
+        console.error('Error loading countries:', err);
+        alert('Failed to load countries. Please try again.');
+      }
+    }
+
+    function loadTimeZones() {
+      const timeZones = Intl.supportedValuesOf('timeZone');
+      const timeZoneSelect = document.getElementById('time-zone');
+      timeZoneSelect.innerHTML = timeZones
+        .map(zone => `<option value="${zone}">${zone}</option>`)
+        .join('');
+      updateLiveTime();
+    }
+
+    function updateLiveTime() {
+      const timeZoneSelect = document.getElementById('time-zone');
+      const liveTimeElement = document.getElementById('live-time');
+      const selectedTimeZone = timeZoneSelect.value || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: selectedTimeZone,
+        timeStyle: 'medium',
+        hourCycle: 'h23',
+      });
+      const gmtOffset = now.toLocaleTimeString('en-US', { timeZoneName: 'short', timeZone: selectedTimeZone }).split(' ')[2];
+
+      liveTimeElement.textContent = `Live Time: ${formatter.format(now)} (${gmtOffset})`;
+    }
+
+    document.getElementById('time-zone').addEventListener('change', updateLiveTime);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCountries();
+      loadTimeZones();
+      setInterval(updateLiveTime, 1000); // Update live time every second
+    });
+
+    async function loadUserSettings() {
+      try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError || !session) {
+          console.error('Error fetching session:', sessionError?.message);
+          alert('You must be logged in to view settings.');
+          return;
+        }
+
+        console.log('Session data:', session); // Log session data for debugging
+
+        const userId = session.user.id;
+
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('username, email')
+          .eq('id', userId)
+          .single();
+
+        if (userError) {
+          console.error('Error fetching user data:', userError.message);
+          alert(`Failed to load user data: ${userError.message}`);
+          return;
+        }
+
+        console.log('User data:', userData); // Log user data for debugging
+
+        document.getElementById('user-name-input').value = userData.username || '';
+        document.getElementById('user-email-input').value = userData.email || '';
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        alert('An unexpected error occurred while loading user data.');
+      }
+    }
+
+    function enableEditing() {
+      document.getElementById('user-name-input').disabled = false;
+      document.getElementById('user-email-input').disabled = false;
+      document.getElementById('edit-user-settings').style.display = 'none';
+      document.getElementById('save-user-settings').style.display = 'inline-block';
+    }
+
+    async function saveUserSettings() {
+      try {
+        const userName = document.getElementById('user-name-input').value.trim();
+        const userEmail = document.getElementById('user-email-input').value.trim();
+
+        if (!userName || !userEmail) {
+          alert('Name and email are required.');
+          return;
+        }
+
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) {
+          console.error('Error fetching session:', error?.message);
+          alert('You must be logged in to save settings.');
+          return;
+        }
+
+        const userId = session.user.id;
+
+        const { error: updateError } = await supabase
+          .from('users')
+          .update({ username: userName, email: userEmail })
+          .eq('id', userId);
+
+        if (updateError) {
+          console.error('Error updating user data:', updateError.message);
+          alert('Failed to save user data.');
+          return;
+        }
+
+        alert('User data saved successfully!');
+        document.getElementById('user-name-input').disabled = true;
+        document.getElementById('user-email-input').disabled = true;
+        document.getElementById('edit-user-settings').style.display = 'inline-block';
+        document.getElementById('save-user-settings').style.display = 'none';
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        alert('An unexpected error occurred while saving user data.');
+      }
+    }
+
+    document.getElementById('edit-user-settings').addEventListener('click', enableEditing);
+    document.getElementById('save-user-settings').addEventListener('click', saveUserSettings);
+
+    document.addEventListener('DOMContentLoaded', loadUserSettings);
   </script>
 </body>
 </html>
